@@ -227,11 +227,11 @@ void muensterTPCAnalysisManager::BeginOfEvent(const G4Event *pEvent) {
 		m_iLXeHitsCollectionID = pSDManager->GetCollectionID("LXeHitsCollection");
 	} 
 
-	if(m_iPmtHitsCollectionID == -1)
-	{
-		G4SDManager *pSDManager = G4SDManager::GetSDMpointer();
-		m_iPmtHitsCollectionID = pSDManager->GetCollectionID("PmtHitsCollection");
-	}
+//	if(m_iPmtHitsCollectionID == -1)
+//	{
+//		G4SDManager *pSDManager = G4SDManager::GetSDMpointer();
+//		m_iPmtHitsCollectionID = pSDManager->GetCollectionID("PmtHitsCollection");
+//	}
 }
 
 //******************************************************************/

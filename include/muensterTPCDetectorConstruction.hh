@@ -68,6 +68,7 @@ private:
 	void ConstructLaboratory();
 	void ConstructShield();
 	void ConstructXenon();
+	void ConstructLiquidXenonCylinder();
 	void ConstructBell();
 	void ConstructFieldCage();
 	void ConstructTPC();

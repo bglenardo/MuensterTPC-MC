@@ -3,7 +3,7 @@
 
 # set properties of the point source
 /Xe/gun/type Point
-/Xe/gun/center 0 -160 -84.5 mm
+/Xe/gun/center 0 0 -84.5 mm
 /Xe/gun/angtype iso
 
 /Xe/gun/energy 0 keV

@@ -1,18 +1,18 @@
 # MuensterTPC
-/Xe/detector/setLXeMeshMaterial GridMeshSS316LSteelLXe
-/Xe/detector/setGXeMeshMaterial GridMeshSS316LSteelGXe
+#/Xe/detector/setLXeMeshMaterial GridMeshSS316LSteelLXe
+#/Xe/detector/setGXeMeshMaterial GridMeshSS316LSteelGXe
 
 # change the material of the LXe phase to another defined material
 # dont forget to remember that this changes the volume name
 /Xe/detector/setMat LXe
 
 # Muenster
-/Xe/detector/setTeflonReflectivity 0.95
-/Xe/detector/setGXeTeflonReflectivity 0.95
+#/Xe/detector/setTeflonReflectivity 0.95
+#/Xe/detector/setGXeTeflonReflectivity 0.95
 /Xe/detector/setLXeAbsorbtionLength 100 cm 
-/Xe/detector/setGXeAbsorbtionLength 100 m 
+#/Xe/detector/setGXeAbsorbtionLength 100 m 
 /Xe/detector/setLXeRayScatterLength 30 cm
 /Xe/detector/setLXeRefractionIndex 1.63
 
 /Xe/detector/setLXeMeshTransparency 0.895
-/Xe/detector/setGXeMeshTransparency 0.895
+#/Xe/detector/setGXeMeshTransparency 0.895

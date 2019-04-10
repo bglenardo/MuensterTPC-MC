@@ -107,17 +107,19 @@ G4VPhysicalVolume* muensterTPCDetectorConstruction::Construct() {
 
   ConstructLaboratory();
 
-  ConstructOuterCryostat();
+  //ConstructOuterCryostat();
 
-  ConstructInnerCryostat();
+  //ConstructInnerCryostat();
 
-  ConstructXenon();
+  ConstructLiquidXenonCylinder();
 
-  ConstructTPC();
+  //ConstructXenon();
 
-  ConstructFieldCage();
+  //ConstructTPC();
 
-  ConstructPmtArrays();
+  //ConstructFieldCage();
+
+  //ConstructPmtArrays();
   
   //PrintPhysicalVolumes();
 
@@ -1006,6 +1008,61 @@ void muensterTPCDetectorConstruction::ConstructXenon() {
   G4VisAttributes *pGXeVisAtt = new G4VisAttributes(hGXeColor);
   pGXeVisAtt->SetVisibility(true);
   m_pGXeLogicalVolume->SetVisAttributes(pGXeVisAtt);
+}
+
+//******************************************************************/
+// ConstructLiquidXenonCylinder
+//******************************************************************/
+void muensterTPCDetectorConstruction::ConstructLiquidXenonCylinder() {
+  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< xenon >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  const G4double dLXeRadius = 60.*cm;
+
+  G4cout << "LXe radius: " << dLXeRadius << G4endl;
+
+  const G4double dLXeHeight = 60.*cm;
+
+	G4Material *LXe = LXeMaterial;
+  G4Material *GXe = G4Material::GetMaterial("GXe");
+
+  //================================ liquid xenon =================================
+  //---------------------- tube the size of the cryostat -----------------------
+  const G4double dLXeHalfZ = 0.5*dLXeHeight;
+  //G4cout<<"dLXeHalfZ: " << dLXeHalfZ << G4endl;
+
+    const G4double dLXeOffsetZ = 0.*cm;
+  //G4cout<<"LXeOffsetZ: "<<dLXeOffsetZ<<G4endl;
+
+  G4Tubs *pLXeTubs = new G4Tubs("LXeTubs", 0.*cm, dLXeRadius, dLXeHalfZ, 0.*deg, 360.*deg);
+
+  m_pLXeLogicalVolume = new G4LogicalVolume(pLXeTubs, LXe, "LXeVolume", 0, 0, 0);
+
+  // m_pLXePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., dLXeOffsetZ),
+  // 					   m_pLXeLogicalVolume, "LXe", m_pMotherLogicalVolume, false, 0);
+  m_pLXePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., dLXeOffsetZ),
+					   m_pLXeLogicalVolume, LXeMaterial->GetName(), m_pLabLogicalVolume, false, 0);
+
+	//TackLimit for opticalphotons (see physics list)
+  G4double maxTrack = 100000;
+  fStepLimit = new G4UserLimits(DBL_MAX,maxTrack);
+  m_pLXeLogicalVolume->SetUserLimits(fStepLimit);
+	
+  //------------------------------ xenon sensitivity ------------------------------
+  G4SDManager *pSDManager = G4SDManager::GetSDMpointer();
+
+  muensterTPCLXeSensitiveDetector *pLXeSD = new muensterTPCLXeSensitiveDetector("muensterTPC/LXeSD");
+  pSDManager->AddNewDetector(pLXeSD);
+  m_pLXeLogicalVolume->SetSensitiveDetector(pLXeSD);
+
+  //================================== attributes =================================
+  G4Colour hLXeColor(0.0,0.0,1.0,DetectorMaterialAlphaChannel); //blue
+
+  G4VisAttributes *pLXeVisAtt = new G4VisAttributes(hLXeColor);
+  pLXeVisAtt->SetVisibility(true);
+  m_pLXeLogicalVolume->SetVisAttributes(pLXeVisAtt);
+
+  G4cout << "Constructed cylinder of LXe..." << G4endl;
+	
 }
 
 //******************************************************************/

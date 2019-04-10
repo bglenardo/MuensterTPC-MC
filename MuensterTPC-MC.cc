@@ -180,6 +180,7 @@ int main(int argc, char **argv)
 	pRunManager->SetUserInitialization(new muensterTPCPhysicsList);
 	
 	// create the primary generator action
+        G4cout << "Creating the primary generator action..." << G4endl;
 	muensterTPCPrimaryGeneratorAction *pPrimaryGeneratorAction = new muensterTPCPrimaryGeneratorAction();
 	pRunManager->SetUserInitialization(new muensterTPCActionInitialization(DatafileName.str(), pPrimaryGeneratorAction));
 
@@ -196,20 +197,20 @@ int main(int argc, char **argv)
 	else if(bVerbosities) {
 		hStream.str("");
 		hStream.clear();
-		hStream << "/control/verbose " << iNbEventsToSimulate;
+		hStream << "/control/verbose " << iVerbosities;
 		pUImanager->ApplyCommand(hStream.str());
 		pUImanager->ApplyCommand("/control/saveHistory");
 		hStream.str("");
 		hStream.clear();
-		hStream << "/run/verbose " << iNbEventsToSimulate;
+		hStream << "/run/verbose " << iVerbosities;
 		pUImanager->ApplyCommand(hStream.str());
 		hStream.str("");
 		hStream.clear();
-		hStream << "/event/verbose " << iNbEventsToSimulate;
+		hStream << "/event/verbose " << iVerbosities;
 		pUImanager->ApplyCommand(hStream.str());
 		hStream.str("");
 		hStream.clear();
-		hStream << "/tracking/verbose " << iNbEventsToSimulate;
+		hStream << "/tracking/verbose " << iVerbosities;
 		pUImanager->ApplyCommand(hStream.str());
 		pUImanager->ApplyCommand("/control/execute macros/preinit_debug.mac");
 	}

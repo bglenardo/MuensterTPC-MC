@@ -3,11 +3,11 @@
 
 # set properties of the point source
 /Xe/gun/type Point
-/Xe/gun/center 0 -160 -84.5 mm
+/Xe/gun/center 0. 0. 0. mm
 /Xe/gun/angtype iso
 
-/Xe/gun/energy 0 keV
-/Xe/gun/particle ion
+/Xe/gun/energy 1. MeV
+/Xe/gun/particle e+
 
 # for Co60
-/Xe/gun/ion 27 60 0 0
+#/Xe/gun/ion 27 60 0 0
