@@ -1,0 +1,13 @@
+# switch on scintillation inside the TPC
+/Xe/detector/setLXeScintillation false
+
+# set properties of the point source
+/Xe/gun/type Point
+/Xe/gun/center 0. 0. 0. mm
+/Xe/gun/angtype iso
+
+/Xe/gun/energy 1. MeV
+/Xe/gun/particle e-
+
+# for Co60
+#/Xe/gun/ion 27 60 0 0

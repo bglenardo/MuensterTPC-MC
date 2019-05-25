@@ -1,0 +1,19 @@
+# switch on scintillation inside the TPC
+/Xe/detector/setLXeScintillation false
+
+# set properties of the point source
+
+
+# only the active volume (z: -2<>-169|x/y: -40<>40)
+
+/Xe/gun/type Volume
+/Xe/gun/shape Cylinder
+/Xe/gun/angtype iso
+/Xe/gun/halfz 1300 mm
+/Xe/gun/radius 1300 mm
+/Xe/gun/center 0 0 0 mm
+/Xe/gun/confine LXe
+/Xe/gun/energy 1. MeV
+/Xe/gun/particle e+
+
+
