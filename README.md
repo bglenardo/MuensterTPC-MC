@@ -155,3 +155,6 @@ Two sensitive detectors are defined in the code:
 * muensterTPCPmtSensitiveDetector
  
 Both detectors are created in each simulation (as well as the corresponding hits collections) but the filled hits depends on the particle type. For example, only simulating optical photons you can fill the PmtHitsCollection.
+
+### Using decay0
+Currently there are macros for 0vKb+ and 2vKb+ decays which use events generated with DECAY0. These files in the `macros/events` folder contain 10000 events each. Example scripts how to run the corresponding MC can be found in the `scripts` folder. Example ROOT files can be found in `example_spectra_decay0`.

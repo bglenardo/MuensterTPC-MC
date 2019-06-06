@@ -35,16 +35,27 @@ using std::vector;
 
 muensterTPCParticleSource::muensterTPCParticleSource()
 {
-	m_iNumberOfParticlesToBeGenerated = 1;
+    first = true;
+        stats = true;
+    
+    m_iNumberOfParticlesToBeGenerated = 1;
 	m_pParticleDefinition = 0;
 	G4ThreeVector hZero(0., 0., 0.);
 
 	m_hParticleMomentumDirection = G4ParticleMomentum(1., 0., 0.);
-	m_dParticleEnergy = 1.0*MeV;
+    m_hParticleMomentum = new vector<G4ParticleMomentum>;
+    m_dParticleEnergy = 1.0*MeV;
 	m_hParticlePosition = hZero;
 	m_dParticleTime = 0.0;
 	m_hParticlePolarization = hZero;
 	m_dParticleCharge = 0.0;
+
+    EvID = 0;
+    m_hInteractionVertexPosition = new vector<G4ThreeVector>;
+    m_hNumberOfProducedParticles = new vector<int>;
+    m_hParticleCode = new vector<int>;
+    m_hParticleTime = new vector<double>;
+    m_hParticleEnergy = new vector<double>;
 
 	m_hSourcePosType = "Volume";
 	m_hShape = "NULL";
@@ -75,6 +86,13 @@ muensterTPCParticleSource::muensterTPCParticleSource()
 muensterTPCParticleSource::~muensterTPCParticleSource()
 {
 	delete m_pMessenger;
+    delete m_hInteractionVertexPosition;
+    delete m_hNumberOfProducedParticles;
+    delete m_hParticleCode;
+    delete m_hParticleTime;
+    delete m_hParticleEnergy;
+    delete m_hParticleMomentum;
+
 }
 
 void
@@ -381,7 +399,10 @@ void
 muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
 {
 
-	if(m_pParticleDefinition == 0)
+    if (m_hEventInputFile == "fromDecay0File") { //reads events from DECAY0 file
+        ReadEventFromDecay0File();
+
+    } else if(m_pParticleDefinition == 0)
 	{
 		G4cout << "No particle has been defined!" << G4endl;
 		return;
@@ -444,20 +465,7 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
 	else
 		G4cout << "Error: EnergyDisType has unusual value" << G4endl;
 
-	// create a new vertex
-	G4PrimaryVertex *vertex = new G4PrimaryVertex(m_hParticlePosition, m_dParticleTime);
-
-	if(m_iVerbosityLevel >= 2)
-		G4cout << "Creating primaries and assigning to vertex" << G4endl;
-	// create new primaries and set them to the vertex
-	G4double mass = m_pParticleDefinition->GetPDGMass();
-	G4double energy = m_dParticleEnergy + mass;
-	G4double pmom = std::sqrt(energy * energy - mass * mass);
-	G4double px = pmom * m_hParticleMomentumDirection.x();
-	G4double py = pmom * m_hParticleMomentumDirection.y();
-	G4double pz = pmom * m_hParticleMomentumDirection.z();
-
-	if(m_iVerbosityLevel >= 1)
+	if ((m_iVerbosityLevel >= 1) && (m_hEventInputFile != "fromDecay0File"))
 	{
 		G4cout << "Particle name: " << m_pParticleDefinition->GetParticleName() << G4endl;
 		G4cout << "       Energy: " << m_dParticleEnergy << G4endl;
@@ -465,21 +473,72 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
 		G4cout << "    Direction: " << m_hParticleMomentumDirection << G4endl;
 		G4cout << " NumberOfParticlesToBeGenerated: " << m_iNumberOfParticlesToBeGenerated << G4endl;
 	}
+    
+    if(m_hEventInputFile == "fromDecay0File"){     // DECAY0 file
+        if(m_iVerbosityLevel >= 1)
+        G4cout << "fromDecay0File" << G4endl;
+        
+        evt->SetEventID(EvID);
+        EvID += 1;
+        
+        //G4cout << "EvID is" << EvID << G4endl;
+        
+        G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+        G4ParticleDefinition* particle_def;
+        G4PrimaryVertex *vertex =
+        new G4PrimaryVertex(m_hParticlePosition, m_dParticleTime);
+        
+        for(int ip=0; ip<m_hNumberOfProducedParticles->back(); ip++){
+            particle_def = particleTable->FindParticle((*m_hParticleCode)[ip]);
+            // Set mass, direction and momentum (kinE)
+            G4PrimaryParticle *particle =
+            new G4PrimaryParticle(particle_def,
+                                  (*m_hParticleMomentum)[ip].x(),
+                                  (*m_hParticleMomentum)[ip].y(),
+                                  (*m_hParticleMomentum)[ip].z());
+            
+            if(m_iVerbosityLevel > 1) {
+                G4cout << "************* Particle definition (" << ip << "): " << G4endl;
+                G4cout << "Particle name: " << particle_def->GetParticleName() << G4endl;
+                G4cout << "Particle mass: " << particle->GetMass() << G4endl;
+                G4cout << "     Position: " << vertex->GetPosition() << G4endl;
+                G4cout << "     Momentum: " << particle->GetMomentum() << G4endl;
+            }
+            
+            vertex->SetPrimary(particle);
+        }
+        evt->AddPrimaryVertex(vertex);
+        
+    } else {
+        
+        G4PrimaryVertex *vertex = new G4PrimaryVertex(m_hParticlePosition, m_dParticleTime);
+        
+        if(m_iVerbosityLevel >= 2)
+        G4cout << "Creating primaries and assigning to vertex" << G4endl;
+        // create new primaries and set them to the vertex
+        G4double mass = m_pParticleDefinition->GetPDGMass();
+        G4double energy = m_dParticleEnergy + mass;
+        G4double pmom = std::sqrt(energy * energy - mass * mass);
+        G4double px = pmom * m_hParticleMomentumDirection.x();
+        G4double py = pmom * m_hParticleMomentumDirection.y();
+        G4double pz = pmom * m_hParticleMomentumDirection.z();
+        
+        //G4cout << m_hParticlePosition << G4endl;
 
-	//G4cout << m_hParticlePosition << G4endl;
-
-	for(G4int i = 0; i < m_iNumberOfParticlesToBeGenerated; i++)
-	{
-		G4PrimaryParticle *particle = new G4PrimaryParticle(m_pParticleDefinition, px, py, pz);
-		particle->SetMass(mass);
-		particle->SetCharge(m_dParticleCharge);
-		particle->SetPolarization(m_hParticlePolarization.x(), m_hParticlePolarization.y(), m_hParticlePolarization.z());
-		vertex->SetPrimary(particle);
-	}
-	evt->AddPrimaryVertex(vertex);
-	if(m_iVerbosityLevel > 1)
-		G4cout << " Primary Vetex generated " << G4endl;
+        for(G4int i = 0; i < m_iNumberOfParticlesToBeGenerated; i++)
+        {
+            G4PrimaryParticle *particle = new G4PrimaryParticle(m_pParticleDefinition, px, py, pz);
+            particle->SetMass(mass);
+            particle->SetCharge(m_dParticleCharge);
+            particle->SetPolarization(m_hParticlePolarization.x(), m_hParticlePolarization.y(), m_hParticlePolarization.z());
+            vertex->SetPrimary(particle);
+        }
+        evt->AddPrimaryVertex(vertex);
+        if(m_iVerbosityLevel > 1)
+            G4cout << " Primary Vetex generated " << G4endl;
+    }
 }
+
 
 void
 muensterTPCParticleSource::GeneratePrimaryVertexFromTrack(G4Track *pTrack, G4Event *pEvent)
@@ -497,5 +556,188 @@ muensterTPCParticleSource::GeneratePrimaryVertexFromTrack(G4Track *pTrack, G4Eve
 	pVertex->SetPrimary(pPrimary);
 
 	pEvent->AddPrimaryVertex(pVertex);
+}
+
+
+void muensterTPCParticleSource::ReadEventFromDecay0File() {
+    // Read raw file and determine data structure
+    const char* DELIMITER = " ";
+    char* token[100] = {}; // initialize to 0
+    char* buf = 0;
+    
+    if ((first == false) && (!raw.good())) {
+        raw.close();
+        if (m_iVerbosityLevel >= 1) {
+            G4cout << "EndOfFile - not enough DECAY0 events!" << G4endl;
+        }
+        first = true;
+    }
+    
+    // only the first time open file
+    if(first){
+        
+        raw.open(m_hInputFileName);
+        //G4cout << "Opened input file." << G4endl;
+        // for each event    - event's number, time of event's start,
+        //                     number of emitted particles;
+        // for each particle - GEANT number of particle,
+        //                     (x,y,z) components of momentum,
+        //                     time shift from previous time
+        // check if "DECAY0" is the first tag
+        while ((getline(raw, linebuffer)) &&
+               (linebuffer[strspn(linebuffer, " \t\v\r\n")] == '\0')) {
+            // Skip blank lines
+        }
+        buf = strdup(linebuffer.c_str());
+        token[0] = strtok(buf, DELIMITER); // first token
+        if (strcmp (token[0],"DECAY0") != 0) {
+            G4cout << "Error: DECAY0 file has unusual structure" << G4endl;
+            return;
+        }
+        // skip header and read "first event" and "last event"
+        while (strcmp (token[0],"First") != 0) {
+            getline(raw, linebuffer);
+            if (linebuffer[strspn(linebuffer, " \t\v\r\n")] != '\0') { // not blank
+                buf = strdup(linebuffer.c_str());
+                token[0] = strtok(buf, DELIMITER);
+            }
+        }
+        getline(raw, linebuffer);
+        buf = strdup(linebuffer.c_str());
+        token[0] = strtok(buf, DELIMITER);
+        token[1] = strtok(0, DELIMITER);
+        first = false;
+        
+        if ((m_iVerbosityLevel >= 1) || (stats)) {
+            G4cout << "****************** DECAY0 GENERATOR IN ACTION ***************"
+            << G4endl;
+            G4cout << "********************* Open file " << m_hInputFileName <<  G4endl;
+            G4cout << "*************************************************************"
+            << G4endl;
+            G4cout << "First event:      " << token[0] << G4endl;
+            G4cout << "Full # of events: " << token[1] << G4endl;
+            G4cout << "*************************************************************"
+            << G4endl;
+            stats = false;
+        }
+        
+        
+        
+        while ((getline(raw, linebuffer)) &&
+               (linebuffer[strspn(linebuffer, " \t\v\r\n")] == '\0')) {
+            // Skip blank lines
+        }
+
+    }
+    if (m_iVerbosityLevel >= 1) {
+        G4cout << "Read Event!" << G4endl;
+    }
+    m_iNumberOfInteractionSites = 1; // only one interaction site
+    m_hNumberOfProducedParticles->clear();
+    m_hParticleCode->clear();
+    m_hParticleMomentum->clear();
+    m_hParticleTime->clear();
+
+    // read event
+    buf = strdup(linebuffer.c_str());
+    token[0] = strtok(buf, DELIMITER);
+    token[1] = strtok(0, DELIMITER);
+    token[2] = strtok(0, DELIMITER);
+    if (m_iVerbosityLevel >= 1) {
+        G4cout << "Event #: " << token[0] << G4endl;
+    }
+    m_hNumberOfProducedParticles->push_back(atoi(token[2]));
+
+    for(int ip=0; ip<m_hNumberOfProducedParticles->back(); ip++){
+        getline(raw, linebuffer);
+        buf = strdup(linebuffer.c_str());
+        token[0] = strtok(buf, DELIMITER);
+        token[1] = strtok(0, DELIMITER);
+        token[2] = strtok(0, DELIMITER);
+        token[3] = strtok(0, DELIMITER);
+        token[4] = strtok(0, DELIMITER);
+        m_hParticleCode->push_back(ConvertGeant3toGeant4ParticleCode(atoi(token[0])));
+        m_hParticleMomentum->push_back(G4ThreeVector(atof(token[1])*MeV,
+                                                     atof(token[2])*MeV, atof(token[3])*MeV));
+        m_hParticleTime->push_back(atof(token[4])*s);
+    }
+
+    while ((getline(raw, linebuffer)) &&
+           (linebuffer[strspn(linebuffer, " \t\v\r\n")] == '\0')) {
+        // Skip blank lines
+    }
+}
+
+int muensterTPCParticleSource::ConvertGeant3toGeant4ParticleCode(int G3ParticleCode) {
+    // create several ParticleGuns
+    /***************
+     DECAY0 particle code - in accordance with GEANT 3.21 manual of October, 1994:
+     1 - gamma         2 - positron     3 - electron
+     4 - neutrino      5 - muon+        6 - muon-
+     7 - pion0         8 - pion+        9 - pion-
+     10 - kaon0 long   11 - kaon+       12 - kaon-
+     13 - neutron      14 - proton      15 - antiproton
+     16 - kaon0 short  17 - eta         18 - lambda
+     19 - sigma+       20 - sigma0      21 - sigma-
+     22 - xi0          23 - xi-         24 - omega
+     25 - antineutron  26 - antilambda  27 - antisigma-
+     28 - antisigma0   29 - antisigma+  30 - antixi0
+     31 - antixi+      32 - antiomega+  45 - deuteron
+     46 - tritium      47 - alpha       48 - geantino
+     49 - He3          50 - Cerenkov
+     0-dummy
+     **************/
+    
+    switch(G3ParticleCode) {
+        case 1   : return 22;       // photon
+        case 25  : return -2112;    // anti-neutron
+        case 2   : return -11;      // e+
+        case 26  : return -3122;    // anti-Lambda
+        case 3   : return 11;       // e-
+        case 27  : return -3222;    // Sigma-
+        case 4   : return 12;       // e-neutrino (NB: flavour undefined by Geant)
+        case 28  : return -3212;    // Sigma0
+        case 5   : return -13;      // mu+
+        case 29  : return -3112;    // Sigma+ (PB)*/
+        case 6   : return 13;       // mu-
+        case 30  : return -3322;    // Xi0
+        case 7   : return 111;      // pi0
+        case 31  : return -3312;    // Xi+
+        case 8   : return 211;      // pi+
+        case 32  : return -3334;    // Omega+ (PB)
+        case 9   : return -211;     // pi-
+        case 33  : return -15;      // tau+
+        case 10  : return 130;      // K long
+        case 34  : return 15;       // tau-
+        case 11  : return 321;      // K+
+        case 35  : return 411;      // D+
+        case 12  : return -321;     // K-
+        case 36  : return -411;     // D-
+        case 13  : return 2112;     // n
+        case 37  : return 421;      // D0
+        case 14  : return 2212;     // p
+        case 38  : return -421;     // D0
+        case 15  : return -2212;    // anti-proton
+        case 39  : return 431;      // Ds+
+        case 16  : return 310;      // K short
+        case 40  : return -431;     // anti Ds-
+        case 17  : return 221;      // eta
+        case 41  : return 4122;     // Lamba_c+
+        case 18  : return 3122;     // Lambda
+        case 42  : return 24;       // W+
+        case 19  : return 3222;     // Sigma+
+        case 43  : return -24;      // W-
+        case 20  : return 3212;     // Sigma0
+        case 44  : return 23;       // Z
+        case 21  : return 3112;     // Sigma-
+        case 45  : return 0;        // deuteron
+        case 22  : return 3322;     // Xi0
+        case 46  : return 0;        // triton
+        case 23  : return 3312;     // Xi-
+        case 47  : return 0;        // alpha
+        case 24  : return 3334;     // Omega- (PB)
+        case 48  : return 0;        // G nu ? PDG ID 0 is undefined
+        default  : return 0;
+    }
 }
 

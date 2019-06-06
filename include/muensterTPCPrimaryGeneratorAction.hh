@@ -13,11 +13,25 @@
 #ifndef __muensterTPCPPRIMARYGENERATORACTION_H__
 #define __muensterTPCPPRIMARYGENERATORACTION_H__
 
-#include <G4VUserPrimaryGeneratorAction.hh>
-#include <G4ThreeVector.hh>
+// Additional Header Files
 #include <globals.hh>
 
+// Root Header Files
+#include <TFile.h>
+#include <TH1.h>
+#include <TParameter.h>
 #include <TRandom3.h>
+
+
+// G4Header Files
+#include <G4EmCalculator.hh>
+#include <G4GeneralParticleSource.hh>
+#include <G4Material.hh>
+#include <G4Navigator.hh>
+#include <G4ParticleGun.hh>
+#include <G4ThreeVector.hh>
+#include <G4VUserPrimaryGeneratorAction.hh>
+
 
 #include "muensterTPCPrimaryGeneratorMessenger.hh"
 
@@ -36,11 +50,14 @@ public:
 	G4double GetEnergyOfPrimary() { return m_dEnergyOfPrimary; }
 	G4ThreeVector GetPositionOfPrimary() { return m_hPositionOfPrimary; }
 
-	void GeneratePrimaries(G4Event *pEvent);
+    void GeneratePrimariesStandard(G4Event *pEvent);
+    void GeneratePrimariesDecay0(G4Event *pEvent);
+    void GeneratePrimaries(G4Event *pEvent);
+
 	void     SetWriteEmpty(G4bool doit){writeEmpty = doit;};
 	G4bool   GetWriteEmpty(){return writeEmpty;};
 
-  private:
+private:
 	muensterTPCPrimaryGeneratorMessenger *m_pMessenger;
 	long m_lSeeds[2];
 	G4bool	writeEmpty;
@@ -48,6 +65,8 @@ public:
 	G4double m_dEnergyOfPrimary;
 	G4ThreeVector m_hPositionOfPrimary;
 
+  
+    
 	muensterTPCParticleSource *m_pParticleSource;
 };
 

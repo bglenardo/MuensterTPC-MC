@@ -63,6 +63,7 @@ private:
   G4UIcmdWithADoubleAndUnit  *m_pEnergyCmd;
   G4UIcmdWithoutParameter    *m_pListCmd;
   G4UIcmdWithAnInteger       *m_pNumberOfParticlesToBeGeneratedCmd;
+  G4UIcmdWithAString *m_pDecay0EventFromFileCmd;
 
   G4bool   m_bShootIon; 
   G4int    m_iAtomicNumber;

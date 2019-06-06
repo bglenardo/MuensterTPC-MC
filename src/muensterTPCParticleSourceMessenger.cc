@@ -184,6 +184,16 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
 	m_pVerbosityCmd->SetGuidance(" 2 : Detailed information");
 	m_pVerbosityCmd->SetParameterName("level", false);
 	m_pVerbosityCmd->SetRange("level>=0 && level <=2");
+
+    // DECAY0 input file
+    // (event's number, time of event's start, number of emitted particles)
+    // (GEANT number of particle, (x,y,z) components of momentum,
+    // time shift from previous time)
+    m_pDecay0EventFromFileCmd =
+    new G4UIcmdWithAString("/xe/gun/decay0eventfromfile", this);
+    m_pDecay0EventFromFileCmd->SetGuidance("Insert file with DECAY0 events");
+    m_pDecay0EventFromFileCmd->SetParameterName("InputFileName", true, true);
+
 }
 
 muensterTPCParticleSourceMessenger::~muensterTPCParticleSourceMessenger()
@@ -206,6 +216,8 @@ muensterTPCParticleSourceMessenger::~muensterTPCParticleSourceMessenger()
 	delete m_pListCmd;
 
 	delete m_pDirectory;
+    delete m_pDecay0EventFromFileCmd;
+
 }
 
 void
@@ -337,7 +349,11 @@ muensterTPCParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String 
                 m_pParticleSource->SetNumberOfParticlesToBeGenerated
                         (m_pNumberOfParticlesToBeGeneratedCmd->GetNewIntValue(newValues));
         }
-
+    else if(command == m_pDecay0EventFromFileCmd) {
+        m_pParticleSource->SetEventInputFile("fromDecay0File");
+        m_pParticleSource->SetInputFileName(newValues);
+        G4cout << "INPUT: DECAY0 events from file " << newValues << G4endl;
+    }
 	else
 		G4cout << "Error entering command" << G4endl;
 }
