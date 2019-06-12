@@ -1,21 +1,15 @@
 # switch on scintillation inside the TPC
 /Xe/detector/setLXeScintillation false
 
-# set properties of the source
+# Make a giant cylindrical source
 /Xe/gun/type Volume
 /Xe/gun/shape Cylinder
-/Xe/gun/halfz 84 mm
-/Xe/gun/radius 40.5 mm
+/Xe/gun/halfz 1000 mm
+/Xe/gun/radius 1000 mm
 /Xe/gun/center 0 0 -85.5 mm
 
-# full volume
-#/Xe/gun/halfz 135 mm
-#/Xe/gun/radius 50 mm
-#/Xe/gun/center 0 0 -84.5 mm
-
+# Confine the source to the LXe volume
 /Xe/gun/confine LXe #GXe
-#/Xe/gun/energy 0 keV
-#/Xe/gun/particle ion
 
 /xe/gun/decay0eventfromfile ./macros/events/2nukbplus_1e4_events.dat
 
