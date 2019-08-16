@@ -1020,7 +1020,7 @@ void muensterTPCDetectorConstruction::ConstructLiquidXenonCylinder() {
 
   G4cout << "LXe radius: " << dLXeRadius << G4endl;
 
-  const G4double dLXeHeight = 60.*cm;
+  const G4double dLXeHeight = 120.*cm;
 
 	G4Material *LXe = LXeMaterial;
   G4Material *GXe = G4Material::GetMaterial("GXe");
