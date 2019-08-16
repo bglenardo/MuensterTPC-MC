@@ -47,3 +47,5 @@ Changelog:
 			 print *,'   '
 			 go to 124
 		      endif
+16/08/2019 :
+	- Added a nuclear deexcitation subroutine for simulation of Xe-124 ECEC/ECb+/b+b+ decays into excited states of Te-124
