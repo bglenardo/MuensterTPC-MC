@@ -314,10 +314,10 @@
 	   elseif((chn(1:2).eq.'Xe'.or.chn(1:2).eq.'XE'.or.
      9             chn(1:2).eq.'xe').and.chn(3:5).eq.'124') then
 124	      print *,'124-Te level:   0. 0+ (gs)     {0 MeV}'
-	      print *,'                1. 2+ (1)  {0.60273 MeV}'
-	      print *,'                2. 2+ (2)  {1.32551 MeV}'
-	      print *,'                3. 0+ (1)  {1.65728 MeV}'
-	      print *,'                4. 0+ (2)  {2.79041 MeV}'
+	      print *,'                1. 2+ (1)  {0.603 MeV}'
+	      print *,'                2. 2+ (2)  {1.326 MeV}'
+	      print *,'                3. 2+ (3)  {2.039 MeV}'
+	      print *,'                4. 0+ (1)  {2.790 MeV}'
 	      print 1
 	      read *,ilevel
 	      if(ilevel.lt.0.or.ilevel.gt.4) then
@@ -1326,15 +1326,14 @@
 !c Added excited nuclear states relevant for double positron decays
 !c Spin and parity of states taken from:
 !c https://doi.org/10.1016/j.nds.2008.06.001
-!c http://dx.doi.org/10.1155/2013/505874
 !c Keep in mind that it is not clear if 2790 keV is 0+, 2+ or 4+
 	      if(ilevel.eq.0) levelE=0
-	      if(ilevel.eq.1) levelE=602.73
-	      if(ilevel.eq.2) levelE=1325.51
-	      if(ilevel.eq.3) levelE=1675.28
-	      if(ilevel.eq.4) levelE=2790.41
-	      if(ilevel.eq.0.or.ilevel.eq.3.or.ilevel.eq.4) itrans02=0
-	      if(ilevel.eq.1.or.ilevel.eq.2) itrans02=2
+	      if(ilevel.eq.1) levelE=603
+	      if(ilevel.eq.2) levelE=1326
+	      if(ilevel.eq.3) levelE=2039
+	      if(ilevel.eq.4) levelE=2790
+	      if(ilevel.eq.0.or.ilevel.eq.4) itrans02=0
+	      if(ilevel.eq.1.or.ilevel.eq.2.or.ilevel.eq.3) itrans02=2
 	   elseif((chn(1:2).eq.'Xe'.or.chn(1:2).eq.'XE'.or.
      9        chn(1:2).eq.'xe').and.chn(3:5).eq.'134') then
 	      chnuclide='Xe134'
@@ -1957,6 +1956,7 @@
 	   if(chnuclide.eq.'Te120')   call Sn120low(levelE)
 	   if(chnuclide.eq.'Te128')   call Xe128low(levelE)
 	   if(chnuclide.eq.'Te130')   call Xe130low(levelE)
+	   if(chnuclide.eq.'Xe124')   call Te124low(levelE)
 	   if(chnuclide.eq.'Xe136')   call Ba136low(levelE)
 	   if(chnuclide.eq.'Nd148')   call Sm148low(levelE)
 	   if(chnuclide.eq.'Nd150')   call Sm150low(levelE)
@@ -12764,6 +12764,92 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 
 !c***********************************************************************
 
+        subroutine Te124low(levelkeV)
+!c Subroutine describes the deexcitation process in Xe128 nucleus
+!c after ECEC/ECb+-decay of Xe124 to ground 0+ and excited 0+/2+ levels
+!c of Te124 ("J. Katakura and Z. D. Wu. Nucl. Data Sheets 109, 1655 (2008)")
+!c Call  : call Te124low(levelkeV)
+!c Input : levelkeV - energy of Te124 level (integer in keV) occupied
+!c                    initially; following levels can be occupied:
+!c                    0+(gs) -     0 keV,
+!c                    0+(1)  -  2790 keV, (This state could also be 2+ or 4+)
+!c		      2+     -  2039 keV,
+!c		      2+     -  1326 keV,
+!c		      2+     -   603 keV.
+!c Energies are rounded to 1 keV for ease of input
+!c Output: common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100).
+!c Wittweg, 15.08.2019.
+	tclev=0.
+	if(levelkev.eq. 2790) go to 2790
+	if(levelkev.eq. 2039) go to 2039
+	if(levelkev.eq. 1326) go to 1326
+	if(levelkev.eq.  603) go to 603
+	if(levelkev.eq.    0) go to 10000
+	                      go to 20000
+!c-----------------------------------------------------------------------
+!c The half-life of this state is set to zero because it is still unknown
+2790    p=100.*rnd1(d)
+	if(p.le.6.00)  go to 27901 
+	if(p.le.27.33) go to 27902 
+	               go to 27903 
+!c-----------------------------------------------------------------------
+!c Internal conversion and internal pair production in this transition unknown, so set to zero
+27901   thlev=0.
+        call nucltransK(0.7515,0.0318,0.,0.,tclev,thlev,tdlev)
+	go to 2039
+!c-----------------------------------------------------------------------
+!c Internal conversion and internal pair production in this transition unknown, so set to zero
+27902   thlev=0.	
+        call nucltransK(2.18800,0.0318,0.,0.,tclev,thlev,tdlev)
+        go to 603
+!c-----------------------------------------------------------------------
+!c Internal conversion and internal pair production in this transition unknown, so set to zero
+27903   thlev=0.
+        call nucltransK(1.46466,0.0318,0.,0.,tclev,thlev,tdlev)
+        go to 1326
+!c-----------------------------------------------------------------------
+2039    p=100.*rnd1(d)
+	if(p.le.36.22) go to 20391 
+	               go to 20392
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+20391	thlev=0.49e-12
+	call nucltransK(2.03936,0.0318,6.67e-4,0.,tclev,thlev,tdlev)
+	return 
+!c-----------------------------------------------------------------------
+!c Internal conversion and internal pair production in this transition unknown, so set to zero
+20392	thlev=0.49e-12
+	call nucltransK(1.43689,0.0318,0.,0.,tclev,thlev,tdlev)
+	go to 603 
+!c-----------------------------------------------------------------------
+1326    p=100.*rnd1(d)
+	if(p.le.13.87) go to 13261 
+	               go to 13262
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+13261	thlev=1.04e-12
+	call nucltransK(1.3255131,0.0318,8.27e-4,0.,tclev,thlev,tdlev)
+	return 
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+13262	thlev=1.04e-12
+	call nucltransK(7.22782,0.0318,0.00314,0.,tclev,thlev,tdlev)
+	go to 603 
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+603     thlev=6.2e-12
+	call nucltransK(0.6027271,0.0318,0.00490,0.,tclev,thlev,tdlev)
+	return
+!c-----------------------------------------------------------------------
+10000	return
+!c-----------------------------------------------------------------------
+20000	print *,'Te124: wrong level [keV] ',levelkev
+!c-----------------------------------------------------------------------
+	return
+	end
+
+!c***********************************************************************
+
 	subroutine Xe128low(levelkeV)
 !c Subroutine describes the deexcitation process in Xe128 nucleus
 !c after 2b-decay of Te128 to ground 0+ and excited 2+ levels
@@ -12852,7 +12938,7 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	end
 
 !c***********************************************************************
-
+!!!
 	subroutine Ba136low(levelkeV)
 !c Subroutine describes the deexcitation process in Ba136 nucleus
 !c after 2b-decay of Xe136 to ground and excited 0+ and 2+ levels
