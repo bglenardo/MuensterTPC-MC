@@ -1316,14 +1316,16 @@
 	      Qbb=2.85673
 	      Zdbb=-56.
 	      EK=0.0318
-!c Current definition of EK causes energy of x-rays to be too small
-!c E_KK = 64.457(12) keV according to PHYSICAL REVIEW C86, 044313 (2012)
+!c Definition of EK causes energy of x-rays in double electron captures to be too small
+!c EKK = 64.457(12) keV according to PHYSICAL REVIEW C86, 044313 (2012)
+!c Using the RELAX package we have found that EKK_visible is 64.33 keV in LXe.
+!c Edit: Fixed in subroutine bb for 0vkk and 2vkk, but currently applied to ALL isotopes
 	      if(ilevel.lt.0.or.ilevel.gt.4) then
 	         print *,'GENBBsub: illegal Te124 level ',ilevel
 	         ier=1
 	         return
 	      endif
-!c Added excited nuclear states relevant for double positron decays
+!c Edit: Added excited nuclear states relevant for double positron decays
 !c Spin and parity of states taken from:
 !c https://doi.org/10.1016/j.nds.2008.06.001
 !c Keep in mind that it is not clear if 2790 keV is 0+, 2+ or 4+
@@ -2313,7 +2315,7 @@
 !c***********************************************************************
 !c****************** Section of double beta decay ***********************
 !c***********************************************************************
-
+!!!
 !c***********************************************************************
 
 	subroutine bb(modebb,Qbb,Edlevel,EK,Zdbb,istartbb)
@@ -2401,15 +2403,19 @@
 	endif
 	if(modebb.eq.11) then
 !c one gamma and two X-rays with fixed energies; no angular correlation
-	   call particle(1,e0,e0,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
+!c Edit: Removed single gamma ray (for non-resonant ECEC). Will add option for non-resonant and resonant decay later
+!c Edit: Changed X-ray energy to half the measurable double K-capture energy EKK=64.33 keV/2./31.8 by scaling EK with a factor. This will break other 0vKK!
+!	   call particle(1,e0,e0,0.,pi,0.,twopi,0.,0.,t)
+           EKK=EK*(64.33/2./31.8)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
 	   return
 	endif
 	if(modebb.eq.12) then
 !c fixed energies of two X-rays; no angular correlation
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
+	   EKK=EK*(64.33/2./31.8)
+           call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
 	   return
 	endif
 	if(istartbb.ne.0) go to 1
@@ -12763,7 +12769,7 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	end
 
 !c***********************************************************************
-
+!c Edit: Added subroutine for nuclear deexcitation
         subroutine Te124low(levelkeV)
 !c Subroutine describes the deexcitation process in Xe128 nucleus
 !c after ECEC/ECb+-decay of Xe124 to ground 0+ and excited 0+/2+ levels
@@ -12833,7 +12839,7 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero
 13262	thlev=1.04e-12
-	call nucltransK(7.22782,0.0318,0.00314,0.,tclev,thlev,tdlev)
+	call nucltransK(0.722782,0.0318,0.00314,0.,tclev,thlev,tdlev)
 	go to 603 
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero

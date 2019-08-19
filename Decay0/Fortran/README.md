@@ -19,6 +19,7 @@ Changelog:
 	- Imported original DECAY0 code and started converting into DECAY0.1 so that Eclipse Photran can parse it successfully.
 	- Replaced the old comments (starting with 'c') with the following command:
 		* sed "/^[c]*/ s/c/\!c/g" test.txt 
+
 11/06/2019 :
 	- Added excited states of Te-124 (ll. 1313ff.)
 		!c Added excited nuclear states relevant for double positron decays
@@ -47,5 +48,11 @@ Changelog:
 			 print *,'   '
 			 go to 124
 		      endif
-16/08/2019 :
+
+16/08/2019:
 	- Added a nuclear deexcitation subroutine for simulation of Xe-124 ECEC/ECb+/b+b+ decays into excited states of Te-124
+
+19/08/2019:
+	- Fixed bugs that caused events with Etot above Q-value
+	- Removed additional Gamma that was still left from the implementation of the non-resonant 0vKK
+	- Corrected 0vKK und 2vKK X-ray energies by giving each X-ray half of the total 64.33 keV
