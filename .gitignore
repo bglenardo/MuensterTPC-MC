@@ -29,4 +29,7 @@
 
 MuensterTPC-MC
 G4History.macro
-*.root
+.DS_Store
+*.pyc
+Decay0/Fortran/decay0
+Makefile
