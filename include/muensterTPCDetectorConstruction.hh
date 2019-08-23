@@ -231,6 +231,9 @@ private:
 	G4LogicalVolume *m_pCryostatLidLogicalVolume;
 	G4LogicalVolume *m_pVacuumCryostatLidLogicalVolume;
 
+        G4LogicalVolume *m_pOuterShellLogicalVolume;
+
+
   // physical volumes
 	G4VPhysicalVolume *m_pLabPhysicalVolume;
 
@@ -243,6 +246,7 @@ private:
 
   //my stuff
 	G4VPhysicalVolume *m_pLXePhysicalVolume;
+        G4VPhysicalVolume *m_pOuterShellPhysicalVolume;
 	G4VPhysicalVolume *m_pGXePhysicalVolume;
 	G4VPhysicalVolume *m_pVetoGXePhysicalVolume;
 	G4VPhysicalVolume *m_pLidInTubeGXePhysicalVolume;
