@@ -56,3 +56,7 @@ Changelog:
 	- Fixed bugs that caused events with Etot above Q-value
 	- Removed additional Gamma that was still left from the implementation of the non-resonant 0vKK
 	- Corrected 0vKK und 2vKK X-ray energies by giving each X-ray half of the total 64.33 keV
+
+23/08/2019:
+	- Added subroutines for angular correlations of subsequent gammas from nuclear transitions
+	- Implemented angular correlations in 'subroutine Te124_low' using the subroutines
