@@ -12,23 +12,30 @@
 # --------------------------------------------------------------
 
 # get full name of the main class file
-name := $(shell find -name 'MuensterTPC-*.cc' -exec basename {} .cc \;)
+
+name := MuensterTPC-MC
 G4TARGET := $(name)
 G4EXLIB := true
+MYEXEPATH:=$(G4WORKDIR)/bin/Darwin-clang
+#CPPVERBOSE := true
 
 G4DEBUG := 0
 
+GEANTLIBS       = $(shell geant4-config --libs)
 ROOTCFLAGS      = $(shell root-config --cflags) -Wno-shadow -w
 ROOTLIBS        = $(shell root-config --nonew --libs)
 ROOTGLIBS       = $(shell root-config --glibs)
 
-EXTRALIBS +=$(ROOTLIBS)
+EXTRALIBS +=$(ROOTLIBS) $(GEANTLIBS)
 CPPFLAGS += $(ROOTCFLAGS)
 
 .PHONY: all
 all: lib bin
 
-include $(G4INSTALL)/config/binmake.gmk
+#change because of compiler error
+include $(G4INSTALL)/config/alt_binmake.gmk
+#include $(G4INSTALL)/config/binmake.gmk
+
 
 # call this routine with 'make link' to create a new symlink of the binary
 link: 
