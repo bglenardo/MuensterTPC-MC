@@ -12918,7 +12918,8 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	return
 	end
 
-! Due to internal conversion we have events with 
+! Due to internal conversion we have events with more than 5 entries because of conversion electrons (and x-rays)
+! These are not properly taken care of yet, but make up less than 1 % of all events!
 !c***********************************************************************
 
 	subroutine twogammaangle(a2,a4,npgamma1,npgamma2)
@@ -13008,8 +13009,8 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	   ctet3=1.-2.*rnd1(d)
 	   stet3=sqrt(1.-ctet3*ctet3)
 	   ctet4=ctet2*ctet3+stet2*stet3*cos(phi2-phi3)
-	   wtet2=(1.+((a22/2.)*((3.*(ctet**2))-1.))+
-     9          ((a42/8.)*((35.*(ctet**4))-(30.*(ctet**2))+3.)))
+	   wtet2=(1.+((a22/2.)*((3.*(ctet4**2))-1.))+
+     9          ((a42/8.)*((35.*(ctet4**4))-(30.*(ctet4**2))+3.)))
 	   if(rnd1(d)*(1.+abs(a22)+abs(a42)).gt.wtet2) go to 2 
 	   	   
 	   pmoment(1,npgamma1)=p1*stet1*cos(phi1)
