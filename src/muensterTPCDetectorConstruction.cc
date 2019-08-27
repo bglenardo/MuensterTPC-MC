@@ -1024,6 +1024,7 @@ void muensterTPCDetectorConstruction::ConstructLiquidXenonCylinder() {
 
 	G4Material *LXe = LXeMaterial;
   G4Material *GXe = G4Material::GetMaterial("GXe");
+  G4Material *Copper = G4Material::GetMaterial("Copper");
 
   //================================ liquid xenon =================================
   //---------------------- tube the size of the cryostat -----------------------
@@ -1062,6 +1063,17 @@ void muensterTPCDetectorConstruction::ConstructLiquidXenonCylinder() {
   m_pLXeLogicalVolume->SetVisAttributes(pLXeVisAtt);
 
   G4cout << "Constructed cylinder of LXe..." << G4endl;
+
+
+  //=================== Outer shell around LXe volume ============================
+  G4Tubs * outerShellTubs = new G4Tubs("OuterShellTubs",dLXeRadius,dLXeRadius + 1.0*cm, 
+                                       dLXeHalfZ + 1.0*cm, 0.*deg, 360.*deg);
+  m_pOuterShellLogicalVolume = new G4LogicalVolume(outerShellTubs, Copper, "OuterShellLog",0,0,0);
+
+  m_pOuterShellPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., dLXeOffsetZ),
+					   m_pOuterShellLogicalVolume, "CopperShell", m_pLabLogicalVolume, false, 0);
+
+
 	
 }
 

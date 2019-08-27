@@ -50,7 +50,9 @@ private:
   G4UIcmdWithAString         *m_pShapeCmd;
   G4UIcmdWith3VectorAndUnit  *m_pCenterCmd;
   G4UIcmdWithADoubleAndUnit  *m_pHalfzCmd;
+  G4UIcmdWithADoubleAndUnit  *m_pInnerHalfzCmd;
   G4UIcmdWithADoubleAndUnit  *m_pRadiusCmd;
+  G4UIcmdWithADoubleAndUnit  *m_pInnerRadiusCmd;
   G4UIcmdWithAString         *m_pConfineCmd;         
   G4UIcmdWithAString         *m_pAngTypeCmd;
   G4UIcmdWithAString         *m_pEnergyTypeCmd;

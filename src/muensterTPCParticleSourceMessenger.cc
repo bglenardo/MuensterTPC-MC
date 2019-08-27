@@ -119,7 +119,7 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
 	m_pShapeCmd->SetGuidance("Sets source shape type.");
 	m_pShapeCmd->SetParameterName("Shape", true, true);
 	m_pShapeCmd->SetDefaultValue("NULL");
-	m_pShapeCmd->SetCandidates("Sphere Cylinder");
+	m_pShapeCmd->SetCandidates("Sphere Cylinder Shell");
 
 	// center coordinates
 	m_pCenterCmd = new G4UIcmdWith3VectorAndUnit("/Xe/gun/center", this);
@@ -135,12 +135,26 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
 	m_pHalfzCmd->SetDefaultUnit("cm");
 	m_pHalfzCmd->SetUnitCandidates("nm mum mm cm m km");
 
+	// half height of source
+	m_pInnerHalfzCmd = new G4UIcmdWithADoubleAndUnit("/Xe/gun/innerHalfz", this);
+	m_pInnerHalfzCmd->SetGuidance("Set z half length of source.");
+	m_pInnerHalfzCmd->SetParameterName("InnerHalfz", true, true);
+	m_pInnerHalfzCmd->SetDefaultUnit("cm");
+	m_pInnerHalfzCmd->SetUnitCandidates("nm mum mm cm m km");
+
 	// radius of source  
 	m_pRadiusCmd = new G4UIcmdWithADoubleAndUnit("/Xe/gun/radius", this);
 	m_pRadiusCmd->SetGuidance("Set radius of source.");
 	m_pRadiusCmd->SetParameterName("Radius", true, true);
 	m_pRadiusCmd->SetDefaultUnit("cm");
 	m_pRadiusCmd->SetUnitCandidates("nm mum mm cm m km");
+
+	// radius of source  
+	m_pInnerRadiusCmd = new G4UIcmdWithADoubleAndUnit("/Xe/gun/innerRadius", this);
+	m_pInnerRadiusCmd->SetGuidance("Set inner radius of source.");
+	m_pInnerRadiusCmd->SetParameterName("InnerRadius", true, true);
+	m_pInnerRadiusCmd->SetDefaultUnit("cm");
+	m_pInnerRadiusCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// confine to volume(s)
 	m_pConfineCmd = new G4UIcmdWithAString("/Xe/gun/confine", this);
@@ -203,6 +217,7 @@ muensterTPCParticleSourceMessenger::~muensterTPCParticleSourceMessenger()
 	delete m_pCenterCmd;
 	delete m_pHalfzCmd;
 	delete m_pRadiusCmd;
+        delete m_pInnerRadiusCmd;
 	delete m_pConfineCmd;
 	delete m_pAngTypeCmd;
 	delete m_pEnergyTypeCmd;
@@ -235,8 +250,14 @@ muensterTPCParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String 
 	else if(command == m_pHalfzCmd)
 		m_pParticleSource->SetHalfZ(m_pHalfzCmd->GetNewDoubleValue(newValues));
 
+	else if(command == m_pInnerHalfzCmd)
+		m_pParticleSource->SetInnerHalfZ(m_pInnerHalfzCmd->GetNewDoubleValue(newValues));
+
 	else if(command == m_pRadiusCmd)
 		m_pParticleSource->SetRadius(m_pRadiusCmd->GetNewDoubleValue(newValues));
+
+	else if(command == m_pInnerRadiusCmd)
+		m_pParticleSource->SetInnerRadius(m_pInnerRadiusCmd->GetNewDoubleValue(newValues));
 
 	else if(command == m_pAngTypeCmd)
 		m_pParticleSource->SetAngDistType(newValues);

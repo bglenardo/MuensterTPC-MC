@@ -30,6 +30,7 @@
 !c***********************************************************************
 
 	character chfile*40,chnuclide*16,chart*4,chdspin*4
+	
 	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
      9                  ptime(100)
 	common/genbbpar/nevents,ievstart,irndmst,iwrfile,chfile
@@ -1316,14 +1317,16 @@
 	      Qbb=2.85673
 	      Zdbb=-56.
 	      EK=0.0318
-!c Current definition of EK causes energy of x-rays to be too small
-!c E_KK = 64.457(12) keV according to PHYSICAL REVIEW C86, 044313 (2012)
+!c Definition of EK causes energy of x-rays in double electron captures to be too small
+!c EKK = 64.457(12) keV according to PHYSICAL REVIEW C86, 044313 (2012)
+!c Using the RELAX package we have found that EKK_visible is 64.33 keV in LXe.
+!c Edit: Fixed in subroutine bb for 0vkk and 2vkk, but currently applied to ALL isotopes
 	      if(ilevel.lt.0.or.ilevel.gt.4) then
 	         print *,'GENBBsub: illegal Te124 level ',ilevel
 	         ier=1
 	         return
 	      endif
-!c Added excited nuclear states relevant for double positron decays
+!c Edit: Added excited nuclear states relevant for double positron decays
 !c Spin and parity of states taken from:
 !c https://doi.org/10.1016/j.nds.2008.06.001
 !c Keep in mind that it is not clear if 2790 keV is 0+, 2+ or 4+
@@ -2313,7 +2316,7 @@
 !c***********************************************************************
 !c****************** Section of double beta decay ***********************
 !c***********************************************************************
-
+!!!
 !c***********************************************************************
 
 	subroutine bb(modebb,Qbb,Edlevel,EK,Zdbb,istartbb)
@@ -2401,15 +2404,19 @@
 	endif
 	if(modebb.eq.11) then
 !c one gamma and two X-rays with fixed energies; no angular correlation
-	   call particle(1,e0,e0,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
+!c Edit: Removed single gamma ray (for non-resonant ECEC). Will add option for non-resonant and resonant decay later
+!c Edit: Changed X-ray energy to half the measurable double K-capture energy EKK=64.33 keV/2./31.8 by scaling EK with a factor. This will break other 0vKK!
+!	   call particle(1,e0,e0,0.,pi,0.,twopi,0.,0.,t)
+           EKK=EK*(64.33/2./31.8)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
 	   return
 	endif
 	if(modebb.eq.12) then
 !c fixed energies of two X-rays; no angular correlation
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
-	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
+	   EKK=EK*(64.33/2./31.8)
+           call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
+	   call particle(1,EKK,EKK,0.,pi,0.,twopi,0.,0.,t)
 	   return
 	endif
 	if(istartbb.ne.0) go to 1
@@ -12763,7 +12770,8 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	end
 
 !c***********************************************************************
-
+!c Edit: Added correct angular correlations for subsequent gamma transitions (Wittweg, 23.08.2019.)	
+!c Edit: Added subroutine for nuclear deexcitation (Wittweg, 15.08.2019.)
         subroutine Te124low(levelkeV)
 !c Subroutine describes the deexcitation process in Xe128 nucleus
 !c after ECEC/ECb+-decay of Xe124 to ground 0+ and excited 0+/2+ levels
@@ -12778,8 +12786,18 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 !c		      2+     -   603 keV.
 !c Energies are rounded to 1 keV for ease of input
 !c Output: common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100).
-!c Wittweg, 15.08.2019.
+	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
+     9                  ptime(100)
 	tclev=0.
+	ek=0.0318
+	npg752=0   
+	npg2188=0
+	npg1465=0
+	npg2039=0
+	npg1437=0
+	npg1326=0
+	npg723=0
+	npg603=0
 	if(levelkev.eq. 2790) go to 2790
 	if(levelkev.eq. 2039) go to 2039
 	if(levelkev.eq. 1326) go to 1326
@@ -12788,57 +12806,109 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	                      go to 20000
 !c-----------------------------------------------------------------------
 !c The half-life of this state is set to zero because it is still unknown
-2790    p=100.*rnd1(d)
+2790    thlev2790=0.
+        p=100.*rnd1(d)
 	if(p.le.6.00)  go to 27901 
 	if(p.le.27.33) go to 27902 
 	               go to 27903 
 !c-----------------------------------------------------------------------
 !c Internal conversion and internal pair production in this transition unknown, so set to zero
-27901   thlev=0.
-        call nucltransK(0.7515,0.0318,0.,0.,tclev,thlev,tdlev)
+27901   e752=0.7515
 	go to 2039
 !c-----------------------------------------------------------------------
 !c Internal conversion and internal pair production in this transition unknown, so set to zero
-27902   thlev=0.	
-        call nucltransK(2.18800,0.0318,0.,0.,tclev,thlev,tdlev)
-        go to 603
+27902   e2188=2.18800
+	go to 6031
 !c-----------------------------------------------------------------------
 !c Internal conversion and internal pair production in this transition unknown, so set to zero
-27903   thlev=0.
-        call nucltransK(1.46466,0.0318,0.,0.,tclev,thlev,tdlev)
-        go to 1326
+27903   e1465=1.46466
+	go to 1326
 !c-----------------------------------------------------------------------
-2039    p=100.*rnd1(d)
+2039    thlev2039=0.49e-12
+        p=100.*rnd1(d)
 	if(p.le.36.22) go to 20391 
 	               go to 20392
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero
-20391	thlev=0.49e-12
-	call nucltransK(2.03936,0.0318,6.67e-4,0.,tclev,thlev,tdlev)
+20391	e2039=2.03936
+	call nucltransK(e752,ek,0.,0.,tclev,thlev2790,tdlev)
+	npg752=npfull
+	call nucltransK(e2039,ek,6.67e-4,0.,tclev,thlev2039,tdlev)
+	npg2039=npfull	
+	call twogammaangle(0.3571,1.1429,npg752,npg2039)	
 	return 
 !c-----------------------------------------------------------------------
 !c Internal conversion and internal pair production in this transition unknown, so set to zero
-20392	thlev=0.49e-12
-	call nucltransK(1.43689,0.0318,0.,0.,tclev,thlev,tdlev)
-	go to 603 
+20392	e1437=1.43689
+	go to 6032 
 !c-----------------------------------------------------------------------
-1326    p=100.*rnd1(d)
+1326	thlev1326=1.04e-12    
+	p=100.*rnd1(d)
 	if(p.le.13.87) go to 13261 
 	               go to 13262
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero
-13261	thlev=1.04e-12
-	call nucltransK(1.3255131,0.0318,8.27e-4,0.,tclev,thlev,tdlev)
+13261	e1326=1.3255131
+	call nucltransK(e1465,ek,0.,0.,tclev,thlev2790,tdlev)
+	npg1465=npfull	
+	call nucltransK(e1326,ek,8.27e-4,0.,tclev,thlev1326,tdlev)
+	npg1326=npfull
+	call twogammaangle(0.3571,1.1429,npg1465,npg1326)	
 	return 
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero
-13262	thlev=1.04e-12
-	call nucltransK(7.22782,0.0318,0.00314,0.,tclev,thlev,tdlev)
-	go to 603 
+13262	e723=0.722782
+	go to 6033 
 !c-----------------------------------------------------------------------
 !c Internal pair production in this transition unknown, so set to zero
-603     thlev=6.2e-12
-	call nucltransK(0.6027271,0.0318,0.00490,0.,tclev,thlev,tdlev)
+603     thlev603=6.2e-12
+	e603=0.6027271
+	call nucltransK(e603,ek,0.00490,0.,tclev,thlev603,tdlev)
+	npg603=npfull	
+	return
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+6031    thlev603=6.2e-12
+	e603=0.6027271
+	call nucltransK(e2188,ek,0.,0.,tclev,thlev2790,tdlev)	
+	npg2188=npfull
+	call nucltransK(e603,ek,0.00490,0.,tclev,thlev603,tdlev)
+	npg603=npfull	
+	call twogammaangle(0.3571,1.1429,npg2188,npg603)	
+	return
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+6032    thlev603=6.2e-12
+	e603=0.6027271
+	a21=0.3381
+	a41=0.0054
+	a22=0.0151
+	a42=0.0054
+	call nucltransK(e752,ek,0.,0.,tclev,thlev2790,tdlev)
+	npg752=npfull	
+	call nucltransK(e1437,ek,0.,0.,tclev,thlev2039,tdlev)	
+	npg1437=npfull
+	call nucltransK(e603,ek,0.00490,0.,tclev,thlev603,tdlev)
+	npg603=npfull	
+	call threegammaangle(a21,a41,a22,a42,npg752,npg1437,npg603)	
+	return
+!c-----------------------------------------------------------------------
+!c Internal pair production in this transition unknown, so set to zero
+6033    thlev603=6.2e-12
+	e603=0.6027271
+	a21=-0.248771
+	a41=0.3005
+	a22=0.1476
+	a42=0.3005	
+	call nucltransK(e1465,ek,0.,0.,tclev,thlev2790,tdlev)	
+	npg1465=npfull
+
+	call nucltransK(e723,ek,0.00314,0.,tclev,thlev1326,tdlev)	
+	npg723=npfull
+	call nucltransK(e603,ek,0.00490,0.,tclev,thlev603,tdlev)
+	npg603=npfull	
+	call threegammaangle(a21,a41,a22,a42,npg1465,npg723,npg603)
+
 	return
 !c-----------------------------------------------------------------------
 10000	return
@@ -12848,6 +12918,113 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 	return
 	end
 
+! Due to internal conversion we have events with more than 5 entries because of conversion electrons (and x-rays)
+! These are not properly taken care of yet, but make up less than 1 % of all events!
+!c***********************************************************************
+
+	subroutine twogammaangle(a2,a4,npgamma1,npgamma2)
+!c Takes the momenta of two consecutive gammas from nuclear transitions and assigns new 
+!c momentum vectors with the correct angular correlation given by the coefficients a2 and a4.
+!c The formula for the angular correlation is a0 + a2*P2(cos(theta)) + a4*P4(cos(theta)).
+!c We have a0=1 while a2 and a4 are coefficients depending on the transition. 
+!c P2, P4 are the second and fourth order Legendre polynomials.
+!c Input : a2, a4 - Coefficients for the angular correlation of the consecutive gammas,
+!c         npgamma1, npgamma2 - particle indices of the first and second gamma in the pmoment(3,100) array.
+!c Output: comn pmoment(3,100).
+!c C. Wittweg (21.08.2019)
+!c	
+	
+	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
+     9                  ptime(100)
+
+	if(npgamma1.ne.0.and.npgamma2.ne.0) then 
+	   p1=sqrt(pmoment(1,npgamma1)**2+pmoment(2,npgamma1)**2+
+     9                pmoment(3,npgamma1)**2)
+	   p2=sqrt(pmoment(1,npgamma2)**2+pmoment(2,npgamma2)**2+
+     9                pmoment(3,npgamma2)**2)
+	   
+	   twopi=6.2831853
+1	   phi1=twopi*rnd1(d)
+	   ctet1=1.-2.*rnd1(d)
+	   stet1=sqrt(1.-ctet1*ctet1)
+	   phi2=twopi*rnd1(d)
+	   ctet2=1.-2.*rnd1(d)
+	   stet2=sqrt(1.-ctet2*ctet2)
+	   ctet=ctet1*ctet2+stet1*stet2*cos(phi1-phi2)
+	   wtet=(1.+(a2/2.)*((3.*(ctet**2))-1.)+
+     9          (a4/8.)*((35.*(ctet**4))-(30.*(ctet**2))+3.))
+	   if(rnd1(d)*(1.+abs(a2)+abs(a4)).gt.wtet) go to 1 
+	   pmoment(1,npgamma1)=p1*stet1*cos(phi1)
+	   pmoment(2,npgamma1)=p1*stet1*sin(phi1)
+	   pmoment(3,npgamma1)=p1*ctet1
+	   pmoment(1,npgamma2)=p2*stet2*cos(phi2)
+	   pmoment(2,npgamma2)=p2*stet2*sin(phi2)
+	   pmoment(3,npgamma2)=p2*ctet2
+	endif
+	return
+	end
+
+!c***********************************************************************
+
+	subroutine threegammaangle(a21,a41,a22,a42,npgamma1,
+     9				   npgamma2,npgamma3)
+!c
+!c Takes the momenta of three consecutive gamma rays from nuclear transitions and assigns new 
+!c momentum vectors with the correct angular correlation given by the coefficients a2 and a4.
+!c The formula for the angular correlation is a0 + a2*P2(cos(theta)) + a4*P4(cos(theta)).
+!c We have a0=1 while a2 and a4 are coefficients depending on the transition. 
+!c P2, P4 are the second and fourth order Legendre polynomials.
+!c Input : a21, a41 - Coefficients for the angular correlation of the first and second gamma,
+!c	   a22, a42 - Coefficients for the angular correlation of the second and third gamma,
+!c         npgamma1, npgamma2, npgamma3 - particle indices of the gammas in the pmoment(3,100) array.
+!c Output: common pmoment(3,100).
+!c C. Wittweg (21.08.2019)
+!c	
+	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
+     9                  ptime(100)
+
+                       
+	if(npgamma1.ne.0.and.npgamma2.ne.0.and.npgamma3.ne.0) then 
+	   p1=sqrt(pmoment(1,npgamma1)**2+pmoment(2,npgamma1)**2+
+     9                pmoment(3,npgamma1)**2)
+	   p2=sqrt(pmoment(1,npgamma2)**2+pmoment(2,npgamma2)**2+
+     9                pmoment(3,npgamma2)**2)
+	   p3=sqrt(pmoment(1,npgamma3)**2+pmoment(2,npgamma3)**2+
+     9                pmoment(3,npgamma3)**2)
+
+	
+	   twopi=6.2831853
+1	   phi1=twopi*rnd1(d)
+	   ctet1=1.-2.*rnd1(d)
+	   stet1=sqrt(1.-ctet1*ctet1)
+	   phi2=twopi*rnd1(d)
+	   ctet2=1.-2.*rnd1(d)
+	   stet2=sqrt(1.-ctet2*ctet2)
+	   ctet=ctet1*ctet2+stet1*stet2*cos(phi1-phi2)
+	   wtet1=(1.+(a21/2.)*((3.*(ctet**2))-1.)+
+     9          (a41/8.)*((35.*(ctet**4))-(30.*(ctet**2))+3.))
+	   if(rnd1(d)*(1.+abs(a21)+abs(a41)).gt.wtet1) go to 1 
+	   
+2	   phi3=twopi*rnd1(d)
+	   ctet3=1.-2.*rnd1(d)
+	   stet3=sqrt(1.-ctet3*ctet3)
+	   ctet4=ctet2*ctet3+stet2*stet3*cos(phi2-phi3)
+	   wtet2=(1.+((a22/2.)*((3.*(ctet4**2))-1.))+
+     9          ((a42/8.)*((35.*(ctet4**4))-(30.*(ctet4**2))+3.)))
+	   if(rnd1(d)*(1.+abs(a22)+abs(a42)).gt.wtet2) go to 2 
+	   	   
+	   pmoment(1,npgamma1)=p1*stet1*cos(phi1)
+	   pmoment(2,npgamma1)=p1*stet1*sin(phi1)
+	   pmoment(3,npgamma1)=p1*ctet1
+	   pmoment(1,npgamma2)=p2*stet2*cos(phi2)
+	   pmoment(2,npgamma2)=p2*stet2*sin(phi2)
+	   pmoment(3,npgamma2)=p2*ctet2
+	   pmoment(1,npgamma3)=p3*stet3*cos(phi3)
+	   pmoment(2,npgamma3)=p3*stet3*sin(phi3)
+	   pmoment(3,npgamma3)=p3*ctet3
+	endif
+	return
+	end
 !c***********************************************************************
 
 	subroutine Xe128low(levelkeV)

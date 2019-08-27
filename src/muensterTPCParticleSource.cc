@@ -60,7 +60,9 @@ muensterTPCParticleSource::muensterTPCParticleSource()
 	m_hSourcePosType = "Volume";
 	m_hShape = "NULL";
 	m_dHalfz = 0.;
+	m_dInnerHalfz = 0.;
 	m_dRadius = 0.;
+        m_dInnerRadius = 0.;
 	m_hCenterCoords = hZero;
 	m_bConfine = false;
 	m_hVolumeNames.clear();
@@ -271,8 +273,6 @@ muensterTPCParticleSource::GeneratePointsInVolume()
 	G4ThreeVector RandPos;
 	G4double x = 0., y = 0., z = 0.;
 
-	//	G4cout << "SHAPE " << m_hShape << G4endl;
-
 	if(m_hSourcePosType != "Volume" && m_iVerbosityLevel >= 1)
 		G4cout << "Error SourcePosType not Volume" << G4endl;
 
@@ -307,7 +307,36 @@ muensterTPCParticleSource::GeneratePointsInVolume()
 			z = (z * 2. * m_dHalfz) - m_dHalfz;
 		}
 	}
+        else if(m_hShape == "Shell")
+        {
+                x = m_dRadius*2.;
+                y = m_dRadius*2.;
+                z = G4UniformRand();
+                z = (z*2.*m_dHalfz) - m_dHalfz;
 
+                if( (z*z) > (m_dInnerHalfz*m_dInnerHalfz) )
+                {
+                   while( ( ((x*x) + (y*y)) > (m_dRadius*m_dRadius) ) )
+                   {
+                           x = G4UniformRand();
+                           y = G4UniformRand();
+                           x = (x*2.*m_dRadius) - m_dRadius;
+                           y = (y*2.*m_dRadius) - m_dRadius;
+                   }
+                } 
+                else
+                {
+                   while( ( ((x*x) + (y*y)) > (m_dRadius*m_dRadius) ) || 
+                          ( ((x*x) + (y*y)) < (m_dInnerRadius*m_dInnerRadius) ) )
+                   {
+                           x = G4UniformRand();
+                           y = G4UniformRand();
+                           x = (x*2.*m_dRadius) - m_dRadius;
+                           y = (y*2.*m_dRadius) - m_dRadius;
+                   }
+               } 
+                
+        }
 	else
 		G4cout << "Error: Volume Shape Does Not Exist" << G4endl;
 

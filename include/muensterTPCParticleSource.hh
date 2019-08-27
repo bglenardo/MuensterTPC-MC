@@ -47,7 +47,9 @@ public:
 	void SetPosDisShape(G4String hShape) { m_hShape = hShape; }
 	void SetCenterCoords(G4ThreeVector hCenterCoords) { m_hCenterCoords = hCenterCoords; }
 	void SetHalfZ(G4double dHalfz) { m_dHalfz = dHalfz; }
+	void SetInnerHalfZ(G4double dInnerHalfz) { m_dInnerHalfz = dInnerHalfz; }
 	void SetRadius(G4double dRadius) { m_dRadius = dRadius; }
+	void SetInnerRadius(G4double dInnerRadius) { m_dInnerRadius = dInnerRadius; }
 
 	void SetAngDistType(G4String hAngDistType) { m_hAngDistType = hAngDistType; }
 	void SetParticleMomentumDirection(G4ParticleMomentum hMomentum) { m_hParticleMomentumDirection = hMomentum.unit(); }
@@ -107,7 +109,9 @@ private:
 	G4String m_hShape;
 	G4ThreeVector m_hCenterCoords;
 	G4double m_dHalfz;
+	G4double m_dInnerHalfz;
 	G4double m_dRadius;
+	G4double m_dInnerRadius;
 	G4bool m_bConfine;
 	set<G4String> m_hVolumeNames;
 	G4String m_hAngDistType;
