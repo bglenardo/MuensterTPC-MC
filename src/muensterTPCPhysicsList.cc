@@ -248,10 +248,10 @@ void muensterTPCPhysicsList::AddTransportation()
 	//G4cout << "----- AddTransportation" << G4endl;
 	G4VUserPhysicsList::AddTransportation();
 
-//    theParticleIterator->reset();
-//    while((*theParticleIterator) ())
+//    GetParticleIterator()->reset();
+//    while((*GetParticleIterator()) ())
 //    {
-//        G4ParticleDefinition *particle = theParticleIterator->value();
+//        G4ParticleDefinition *particle = GetParticleIterator()->value();
 //        G4ProcessManager *pmanager = particle->GetProcessManager();
 //        G4String particleName = particle->GetParticleName();
 
@@ -327,10 +327,10 @@ muensterTPCPhysicsList::ConstructEM()
   opt.SetDEDXBinning(200);
   opt.SetLambdaBinning(200);
 
-	theParticleIterator->reset();
-	while((*theParticleIterator) ())
+	GetParticleIterator()->reset();
+	while((*GetParticleIterator()) ())
 	{
-		G4ParticleDefinition *particle = theParticleIterator->value();
+		G4ParticleDefinition *particle = GetParticleIterator()->value();
 		G4ProcessManager *pmanager = particle->GetProcessManager();
 		G4String particleName = particle->GetParticleName();
 		G4String particleType = particle->GetParticleType();
@@ -554,10 +554,10 @@ muensterTPCPhysicsList::ConstructOp()
 	//G4OpticalSurfaceModel themodel = unified;
 	//theBoundaryProcess->SetModel(themodel);
 
-	theParticleIterator->reset();
-	while((*theParticleIterator) ())
+	GetParticleIterator()->reset();
+	while((*GetParticleIterator()) ())
 	{
-		G4ParticleDefinition *particle = theParticleIterator->value();
+		G4ParticleDefinition *particle = GetParticleIterator()->value();
 		G4ProcessManager *pmanager = particle->GetProcessManager();
 		G4String particleName = particle->GetParticleName();
 
@@ -737,10 +737,10 @@ void muensterTPCPhysicsList::ConstructHad()
 		 	G4VCrossSectionDataSet* theGGNuclNuclData = new G4CrossSectionElastic(ionElasticXS);
 	#endif
 
-  	theParticleIterator->reset();
-  	while ((*theParticleIterator)()) 
+  	GetParticleIterator()->reset();
+  	while ((*GetParticleIterator())()) 
     	{
-      		G4ParticleDefinition* particle = theParticleIterator->value();
+      		G4ParticleDefinition* particle = GetParticleIterator()->value();
       		G4ProcessManager* pmanager = particle->GetProcessManager();
       		G4String particleName = particle->GetParticleName();
 
@@ -995,10 +995,10 @@ void muensterTPCPhysicsList::ConstructGeneral()
 	// Add Decay Process
 	G4Decay *theDecayProcess = new G4Decay();
 
-	theParticleIterator->reset();
-	while((*theParticleIterator) ())
+	GetParticleIterator()->reset();
+	while((*GetParticleIterator()) ())
 	{
-		G4ParticleDefinition *particle = theParticleIterator->value();
+		G4ParticleDefinition *particle = GetParticleIterator()->value();
 		G4ProcessManager *pmanager = particle->GetProcessManager();
 
 		if(theDecayProcess->IsApplicable(*particle)
