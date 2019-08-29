@@ -12808,9 +12808,9 @@ C JPG 34(2007)837. Transition to the ground state (6+) is suppressed by
 !c The half-life of this state is set to zero because it is still unknown
 2790    thlev2790=0.
         p=100.*rnd1(d)
-	if(p.le.6.00)  go to 27901 
-	if(p.le.27.33) go to 27902 
-	               go to 27903 
+	if(p.le.6.00)  	      go to 27901 
+	if(p.le.(27.33+6.00)) go to 27902 
+	               	      go to 27903 
 !c-----------------------------------------------------------------------
 !c Internal conversion and internal pair production in this transition unknown, so set to zero
 27901   e752=0.7515
