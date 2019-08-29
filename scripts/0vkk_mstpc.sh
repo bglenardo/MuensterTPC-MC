@@ -15,7 +15,7 @@ echo 'Filename is '$filename
 cd $G4WORKDIR/MuensterTPC-MC
 
 #Run the MC, change verbosity for more info with '-v 1'
-runstring='./MuensterTPC-MC -f ./macros/src_'$filename'.mac -o '$filename'.root -n 10000 -v 0'
+runstring='./MuensterTPC-MC -f ./macros/src_'$filename'.mac -o '$filename'.root -n 100000 -v 0'
 
 $runstring
 

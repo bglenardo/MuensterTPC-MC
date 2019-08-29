@@ -2,14 +2,21 @@
 /Xe/detector/setLXeScintillation false
 
 # Make a giant cylindrical source
+# nEXO
 /Xe/gun/type Volume
 /Xe/gun/shape Cylinder
-/Xe/gun/halfz 1000 mm
-/Xe/gun/radius 1000 mm
-/Xe/gun/center 0 0 -85.5 mm
+/Xe/gun/halfz 600 mm
+/Xe/gun/radius 600 mm
+/Xe/gun/center 0 0 0.0 mm
+
+# DARWIN
+#/Xe/gun/halfz 1250 mm
+#/Xe/gun/radius 1250 mm
+#/Xe/gun/center 0 0 0.0 mm
 
 # Confine the source to the LXe volume
 /Xe/gun/confine LXe #GXe
 
-/xe/gun/decay0eventfromfile ./macros/events/0nu2bplus_rc_1e4_events.dat
+
+/xe/gun/decay0eventfromfile ./macros/events/0nu2bplus_rc_1e5_events.dat
 
