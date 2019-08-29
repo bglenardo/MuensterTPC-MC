@@ -1015,14 +1015,25 @@ void muensterTPCDetectorConstruction::ConstructXenon() {
 //******************************************************************/
 void muensterTPCDetectorConstruction::ConstructLiquidXenonCylinder() {
   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< xenon >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
+//nEXO-like detector
+    /*
   const G4double dLXeRadius = 60.*cm;
 
   G4cout << "LXe radius: " << dLXeRadius << G4endl;
 
   const G4double dLXeHeight = 120.*cm;
+*/
+    
+//DARWIN-like detector
+  
+  const G4double dLXeRadius = 125.*cm;
 
-	G4Material *LXe = LXeMaterial;
+  G4cout << "LXe radius: " << dLXeRadius << G4endl;
+
+  const G4double dLXeHeight = 250.*cm;
+  
+    
+  G4Material *LXe = LXeMaterial;
   G4Material *GXe = G4Material::GetMaterial("GXe");
   G4Material *Copper = G4Material::GetMaterial("Copper");
 
