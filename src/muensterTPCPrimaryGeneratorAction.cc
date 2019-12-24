@@ -112,6 +112,8 @@ void muensterTPCPrimaryGeneratorAction::GeneratePrimariesStandard(G4Event *pEven
 void muensterTPCPrimaryGeneratorAction::GeneratePrimaries(G4Event *pEvent) {
     if (m_pParticleSource->GetEventInputFile() == "fromDecay0File") {
         GeneratePrimariesDecay0(pEvent);
+    } else if( m_pParticleSource->GetEventInputFile() == "Xe131NeutrinoCapture" ) {
+    	GeneratePrimariesDecay0(pEvent);
     } else {
         GeneratePrimariesStandard(pEvent);
     }

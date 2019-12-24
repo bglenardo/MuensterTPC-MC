@@ -102,6 +102,10 @@ public:
     void SetInputFileName(G4String hInputFileName) {
         m_hInputFileName = hInputFileName;
     }
+
+    void SetNeutrinoScatterElectronEnergy( G4double m_dNeutrinoScatterElectronEnergy_ ){
+	m_dNeutrinoScatterElectronEnergy = m_dNeutrinoScatterElectronEnergy_;
+    }
         
         
 private:
@@ -134,6 +138,7 @@ private:
 	G4ParticleDefinition *m_pParticleDefinition;
 	G4ParticleMomentum m_hParticleMomentumDirection;
 	G4double m_dParticleEnergy;
+	G4double m_dNeutrinoScatterElectronEnergy;
 	G4double m_dParticleCharge;
 	G4ThreeVector m_hParticlePosition;
 	G4double m_dParticleTime;

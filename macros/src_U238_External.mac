@@ -1,0 +1,22 @@
+# switch on scintillation inside the TPC
+/Xe/detector/setLXeScintillation false
+
+# only the active volume (z: -2<>-169|x/y: -40<>40)
+#Xe/gun/halfz 84 mm
+#/Xe/gun/radius 40.5 mm
+#/Xe/gun/center 0 0 -85.5 mm
+
+# full volume
+/Xe/gun/shape Shell
+/Xe/gun/halfz 610 mm
+/Xe/gun/innerHalfz 600 mm
+/Xe/gun/innerRadius 600 mm
+/Xe/gun/radius 610 mm
+/Xe/gun/center 0 0 0 mm
+
+#/Xe/gun/confine CopperShell
+/Xe/gun/energy 0 keV
+/Xe/gun/particle ion
+
+# for 83mKr / Kr-83m
+/Xe/gun/ion 92 238 0 0

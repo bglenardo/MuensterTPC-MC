@@ -238,6 +238,7 @@ void muensterTPCAnalysisManager::BeginOfEvent(const G4Event *pEvent) {
 // EndOfEvent action - getting all event data
 //******************************************************************/
 void muensterTPCAnalysisManager::EndOfEvent(const G4Event *pEvent) {
+	G4cout << "End of event............." << G4endl;
 	G4HCofThisEvent* pHCofThisEvent = pEvent->GetHCofThisEvent();
 	muensterTPCLXeHitsCollection* pLXeHitsCollection = 0;
 	muensterTPCPmtHitsCollection* pPmtHitsCollection = 0;

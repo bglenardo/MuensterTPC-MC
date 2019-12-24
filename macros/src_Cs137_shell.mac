@@ -2,12 +2,16 @@
 /Xe/detector/setLXeScintillation false
 
 # set properties of the point source
-/Xe/gun/type Point
+/Xe/gun/shape Shell
+/Xe/gun/halfz 610 mm
+/Xe/gun/innerHalfz 600 mm
+/Xe/gun/innerRadius 600 mm
+/Xe/gun/radius 610 mm
 /Xe/gun/center 0 0 0 mm
 /Xe/gun/angtype iso
 
 /Xe/gun/energy 0 keV
 /Xe/gun/particle ion
 
-# for Co60
-/Xe/gun/ion 55 128 0 0
+# for 137Cs
+/Xe/gun/ion 55 137 0 0

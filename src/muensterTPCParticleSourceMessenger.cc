@@ -106,6 +106,20 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
 	param->SetDefaultValue("0.0");
 	m_pIonCmd->SetParameter(param);
 
+	m_pXe131NeutrinoCaptureCmd = 
+		new G4UIcommand("/Xe/gun/Xe131NeutrinoCapture", this);
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("Set properties of neutrino capture event.");
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("[usage] /gun/Xe131NeutrinoCapture T Ex");
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("        T:(double) Kinetic energy of electron");
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("        Ex:(double) Excitation of Cs131 nucleus");
+
+	param = new G4UIparameter("T", 'd', false);
+	param->SetDefaultValue("364.485");
+	m_pXe131NeutrinoCaptureCmd->SetParameter(param);
+	param = new G4UIparameter("Ex", 'd', true);
+	param->SetDefaultValue("131.615");
+	m_pXe131NeutrinoCaptureCmd->SetParameter(param);
+
 	// source distribution type
 	m_pTypeCmd = new G4UIcmdWithAString("/Xe/gun/type", this);
 	m_pTypeCmd->SetGuidance("Sets source distribution type.");
@@ -207,6 +221,7 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
     new G4UIcmdWithAString("/xe/gun/decay0eventfromfile", this);
     m_pDecay0EventFromFileCmd->SetGuidance("Insert file with DECAY0 events");
     m_pDecay0EventFromFileCmd->SetParameterName("InputFileName", true, true);
+
 
 }
 
@@ -375,7 +390,47 @@ muensterTPCParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String 
         m_pParticleSource->SetInputFileName(newValues);
         G4cout << "INPUT: DECAY0 events from file " << newValues << G4endl;
     }
-	else
+    else if(command == m_pXe131NeutrinoCaptureCmd) {	
+        		m_pParticleSource->SetEventInputFile("Xe131NeutrinoCapture");
+			G4Tokenizer next(newValues);
+
+			// check argument
+			m_iAtomicNumber = 55;
+			m_iAtomicMass = 131;
+			m_iIonCharge = 0;
+			G4String sT = next();
+			G4cout << "sT: " << sT << G4endl;
+			m_dNeutrinoScatterElectronEnergy = StoD(sT) * keV;
+			//G4cout << "m_dNeutrinoScatterElectronEnergy set in Messenger: " << 
+			//		m_dNeutrinoScatterElectronEnergy << G4endl;
+			m_pParticleSource->SetNeutrinoScatterElectronEnergy( m_dNeutrinoScatterElectronEnergy );
+			G4String sEx = next();
+			if(sEx.isNull()){
+				m_dIonExciteEnergy = 0.0*keV;
+			}
+			else
+			{
+				m_dIonExciteEnergy = StoD(sEx) * keV;
+			}
+
+			G4ParticleDefinition *ion;
+
+			//ion = m_pParticleTable->GetIon(m_iAtomicNumber, m_iAtomicMass, m_dIonExciteEnergy);
+			ion = m_pIonTable->GetIon(m_iAtomicNumber, m_iAtomicMass, m_dIonExciteEnergy);
+			//m_pIonTable->FindIon(m_iAtomicNumber, m_iAtomicMass, m_dIonExciteEnergy);
+			if(ion == 0)
+			{
+				G4cout << "Ion with Z=" << m_iAtomicNumber;
+				G4cout << " A=" << m_iAtomicMass << "is not be defined" << G4endl;
+			}
+			else
+			{
+				m_pParticleSource->SetParticleDefinition(ion);
+				m_pParticleSource->SetParticleCharge(m_iIonCharge *eplus);
+			}
+
+    } else
 		G4cout << "Error entering command" << G4endl;
+
 }
 
