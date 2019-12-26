@@ -560,15 +560,13 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
         G4double ionpy = ionpmom * m_hParticleMomentumDirection.y();
         G4double ionpz = ionpmom * m_hParticleMomentumDirection.z();
         
-        //G4cout << "Ionpmom: " << ionpmom << G4endl;
-
         G4PrimaryParticle *ion = new G4PrimaryParticle(m_pParticleDefinition, ionpx, ionpy, ionpz);
         ion->SetMass(ionmass);
         ion->SetCharge(m_dParticleCharge);
         ion->SetPolarization(m_hParticlePolarization.x(), m_hParticlePolarization.y(), m_hParticlePolarization.z());
-	G4cout << "Ion energy: " << ionenergy << G4endl;
-	G4cout << "Ion mass: " << ionmass << G4endl;
-	G4cout << "Ion pmom: " << ionpmom << G4endl;
+	//G4cout << "Ion energy: " << ionenergy << G4endl;
+	//G4cout << "Ion mass: " << ionmass << G4endl;
+	//G4cout << "Ion pmom: " << ionpmom << G4endl;
 
         vertex->SetPrimary(ion);
 
@@ -589,9 +587,9 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
                                   electronpy,
                                   electronpz);
         primaryelectron->SetPolarization(m_hParticlePolarization.x(), m_hParticlePolarization.y(), m_hParticlePolarization.z());
-	G4cout << "Electron energy: " << electronenergy << G4endl;
-	G4cout << "Electron mass: " << electronmass << G4endl;
-	G4cout << "Electron pmom: " << electronpmom << G4endl;
+	//G4cout << "Electron energy: " << electronenergy << G4endl;
+	//G4cout << "Electron mass: " << electronmass << G4endl;
+	//G4cout << "Electron pmom: " << electronpmom << G4endl;
             
             if(m_iVerbosityLevel > 1) {
                 G4cout << "************* Particle definition: 11 " << G4endl;
@@ -602,9 +600,7 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
             }
         //    
         vertex->SetPrimary(primaryelectron);
-      	G4cout << "Setting primaryelectron into primary vertex." << G4endl;
         evt->AddPrimaryVertex(vertex);
-	G4cout << "Added primary vertex." << G4endl;
         if(m_iVerbosityLevel > 1)
             G4cout << " Primary Vetex generated " << G4endl; 
     

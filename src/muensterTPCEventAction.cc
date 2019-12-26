@@ -57,8 +57,7 @@ void muensterTPCEventAction::BeginOfEventAction(const G4Event *pEvent) {
 		G4cout << "Data file stamp: " << starttime.str() << G4endl;
 		G4cout << "================================================================" << G4endl;
 	}
-	
-	if ( (pEvent->GetEventID() % 1000 == 0) || (pEvent->GetEventID() % (m_iNbEventsToSimulate/5) == 0) )
+	if ( (pEvent->GetEventID() % 1000 == 0) || (pEvent->GetEventID() % int(m_iNbEventsToSimulate/5.+1.) == 0) )
 	{
 		time_un = time(0);
 		time_now = localtime(&time_un);
@@ -67,8 +66,8 @@ void muensterTPCEventAction::BeginOfEventAction(const G4Event *pEvent) {
 		     << "-" << time_now->tm_mday << " " << time_now->tm_hour
 		     << "-" << time_now->tm_min << "-" << time_now->tm_sec;
 		currtimeunix = time_un - starttimeunix;
-
 		if ( (pEvent->GetEventID() > 0) && ((pEvent->GetEventID()/currtimeunix) > 0) ) {
+			G4cout << "if ( (pEvent->GetEventID() > 0) && ((pEvent->GetEventID()/currtimeunix) > 0) ) {" << G4endl;
 			endtimeunix = starttimeunix + m_iNbEventsToSimulate / (pEvent->GetEventID()/currtimeunix);
 			time_end = localtime(&endtimeunix);
 			strftime(endtime, sizeof(endtime), "%Y-%m-%d %H-%M-%S", time_end);
@@ -80,7 +79,6 @@ void muensterTPCEventAction::BeginOfEventAction(const G4Event *pEvent) {
 			G4cout << currtime.str() << " || Start of first event || " << currtimeunix << "s initialization" << G4endl;
 		}
 	}
-
 	if(m_pAnalysisManager)
 		m_pAnalysisManager->BeginOfEvent(pEvent);
 }
