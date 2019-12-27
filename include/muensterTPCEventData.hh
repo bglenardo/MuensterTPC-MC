@@ -46,6 +46,10 @@ public:
 	vector<float> *m_pX;					// position of the step
 	vector<float> *m_pY;
 	vector<float> *m_pZ;
+	vector<float> *m_pX_fromPri;					// position of the step
+	vector<float> *m_pY_fromPri;
+	vector<float> *m_pZ_fromPri;
+	vector<float> *m_pR_fromPri;
 	vector<float> *m_pEnergyDeposited; 			// energy deposited in the step
 	vector<float> *m_pTrackInitEnergy;
 	vector<float> *m_pKineticEnergy;	// particle kinetic energy after the step			

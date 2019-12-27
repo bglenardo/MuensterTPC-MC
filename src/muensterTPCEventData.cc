@@ -30,6 +30,10 @@ muensterTPCEventData::muensterTPCEventData()
 	m_pX = new vector<float>;
 	m_pY = new vector<float>;
 	m_pZ = new vector<float>;
+	m_pX_fromPri = new vector<float>;
+	m_pY_fromPri = new vector<float>;
+	m_pZ_fromPri = new vector<float>;
+	m_pR_fromPri = new vector<float>;
 	m_pEnergyDeposited = new vector<float>;
 	m_pTrackInitEnergy = new vector<float>;
 	m_pKineticEnergy = new vector<float>;
@@ -55,6 +59,10 @@ muensterTPCEventData::~muensterTPCEventData()
 	delete m_pX;
 	delete m_pY;
 	delete m_pZ;
+	delete m_pX_fromPri;
+	delete m_pY_fromPri;
+	delete m_pZ_fromPri;
+	delete m_pR_fromPri;
 	delete m_pEnergyDeposited;
 	delete m_pKineticEnergy;
 	delete m_pTime;
@@ -84,6 +92,10 @@ muensterTPCEventData::Clear()
 	m_pX->clear();
 	m_pY->clear();
 	m_pZ->clear();
+	m_pX_fromPri->clear();
+	m_pY_fromPri->clear();
+	m_pZ_fromPri->clear();
+	m_pR_fromPri->clear();
 	m_pEnergyDeposited->clear();
 	m_pTrackInitEnergy->clear();
 	m_pKineticEnergy->clear();

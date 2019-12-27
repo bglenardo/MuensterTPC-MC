@@ -170,6 +170,7 @@ void muensterTPCAnalysisManager::BeginOfRun(const G4Run *pRun) {
 		// ed:	energy deposition of the current particle/trackid
 		// 			Acces in ROOT: 		vector<float> *ed= new vector<float>;
 		//												T1->SetBranchAddress("ed", &ed);
+		m_pTree->Branch("rp_fromPri", "vector<float>", &m_pEventData->m_pR_fromPri);
 		m_pTree->Branch("ed", "vector<float>", &m_pEventData->m_pEnergyDeposited);
 		// time:	timestamp of the current particle/trackid
 		// 				Acces in ROOT: 		vector<float> *time= new vector<float>;
@@ -295,6 +296,16 @@ void muensterTPCAnalysisManager::EndOfEvent(const G4Event *pEvent) {
 				m_pEventData->m_pX->push_back(pHit->GetPosition().x()/mm);
 				m_pEventData->m_pY->push_back(pHit->GetPosition().y()/mm);
 				m_pEventData->m_pZ->push_back(pHit->GetPosition().z()/mm);
+
+				m_pEventData->m_pR_fromPri->push_back( std::sqrt( 
+							(pHit->GetPosition().x()/mm - m_pEventData->m_fPrimaryX)*
+							(pHit->GetPosition().x()/mm - m_pEventData->m_fPrimaryX) + 
+							(pHit->GetPosition().y()/mm - m_pEventData->m_fPrimaryY)*
+							(pHit->GetPosition().y()/mm - m_pEventData->m_fPrimaryY) + 
+							(pHit->GetPosition().z()/mm - m_pEventData->m_fPrimaryZ)*
+							(pHit->GetPosition().z()/mm - m_pEventData->m_fPrimaryZ) ) 
+								     );
+
 
 				fTotalEnergyDeposited += pHit->GetEnergyDeposited()/keV;
 				m_pEventData->m_pEnergyDeposited->push_back(pHit->GetEnergyDeposited()/keV);
