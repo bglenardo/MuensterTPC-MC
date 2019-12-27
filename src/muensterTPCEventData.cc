@@ -22,6 +22,7 @@ muensterTPCEventData::muensterTPCEventData()
 
 	m_pTrackId = new vector<int>;
 	m_pParentId = new vector<int>;
+	m_pParticleTypeCode = new vector<int>;
 	m_pParticleType = new vector<string>;
 	m_pParentType = new vector<string>;
 	m_pCreatorProcess = new vector<string>;
@@ -30,6 +31,7 @@ muensterTPCEventData::muensterTPCEventData()
 	m_pY = new vector<float>;
 	m_pZ = new vector<float>;
 	m_pEnergyDeposited = new vector<float>;
+	m_pTrackInitEnergy = new vector<float>;
 	m_pKineticEnergy = new vector<float>;
 	m_pTime = new vector<float>;
 
@@ -45,6 +47,7 @@ muensterTPCEventData::~muensterTPCEventData()
 	delete m_pPmtHits;
 	delete m_pTrackId;
 	delete m_pParentId;
+	delete m_pParticleTypeCode;
 	delete m_pParticleType;
 	delete m_pParentType;
 	delete m_pCreatorProcess;
@@ -55,7 +58,7 @@ muensterTPCEventData::~muensterTPCEventData()
 	delete m_pEnergyDeposited;
 	delete m_pKineticEnergy;
 	delete m_pTime;
-
+	delete m_pTrackInitEnergy;
 	delete m_pPrimaryParticleType;
 }
 
@@ -73,6 +76,7 @@ muensterTPCEventData::Clear()
 
 	m_pTrackId->clear();
 	m_pParentId->clear();
+	m_pParticleTypeCode->clear();
 	m_pParticleType->clear();
 	m_pParentType->clear();
 	m_pCreatorProcess->clear();
@@ -81,6 +85,7 @@ muensterTPCEventData::Clear()
 	m_pY->clear();
 	m_pZ->clear();
 	m_pEnergyDeposited->clear();
+	m_pTrackInitEnergy->clear();
 	m_pKineticEnergy->clear();
 	m_pTime->clear();
 

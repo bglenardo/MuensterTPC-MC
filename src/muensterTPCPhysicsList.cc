@@ -47,8 +47,8 @@
 // Constructor /////////////////////////////////////////////////////////////
 muensterTPCPhysicsList::muensterTPCPhysicsList():G4VUserPhysicsList() {
 
-	defaultCutValue = 1.0 * mm;	//
-	cutForGamma = defaultCutValue;
+	defaultCutValue = 0.01 * mm;	//
+	cutForGamma = defaultCutValue*0.01;
 	cutForElectron = defaultCutValue;
 	cutForPositron = defaultCutValue;
 

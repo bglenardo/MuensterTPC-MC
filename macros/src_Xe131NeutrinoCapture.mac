@@ -4,7 +4,7 @@
 # Make a giant cylindrical source
 /Xe/gun/type Point
 /Xe/gun/angtype iso
-/Xe/gun/position 0 0 0
+/Xe/gun/position 0. 0. 0. mm
 #/Xe/gun/shape Cylinder
 #/Xe/gun/halfz 1000 mm
 #/Xe/gun/radius 1000 mm
@@ -13,5 +13,7 @@
 # Confine the source to the LXe volume
 /Xe/gun/confine LXe #GXe
 
-/Xe/gun/Xe131NeutrinoCapture 364.485 131.615
-
+#/Xe/gun/Xe131NeutrinoCapture 419.367 78.730
+#/Xe/gun/Xe131NeutrinoCapture 282.014 216.086
+#/Xe/gun/Xe131NeutrinoCapture 142.858 373.242
+/Xe/gun/Xe131NeutrinoCapture 364.485 133.615

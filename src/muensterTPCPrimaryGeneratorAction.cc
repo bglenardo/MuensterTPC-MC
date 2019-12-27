@@ -53,20 +53,22 @@ void muensterTPCPrimaryGeneratorAction::GeneratePrimariesDecay0(G4Event *pEvent)
     m_lSeeds[1] = *(CLHEP::HepRandom::getTheSeeds()+1);
     
     m_pParticleSource->GeneratePrimaryVertex(pEvent);
-    /*
+    G4PrimaryVertex *pVertex = pEvent->GetPrimaryVertex();
+    m_hPositionOfPrimary = pVertex->GetPosition();
+    
      // particle name of primary
-     m_hParticleTypeOfPrimary = particleTable->FindParticle(particle->GetG4code())->GetParticleName();
+     //m_hParticleTypeOfPrimary = particleTable->FindParticle(particle->GetG4code())->GetParticleName();
      // kinetic energy of primary
-     m_dEnergyOfPrimary       = particle->GetKineticEnergy();
+     //m_dEnergyOfPrimary       = particle->GetKineticEnergy();
      // position of primary
-     m_hPositionOfPrimary     = vertex->GetPosition();
+     //m_hPositionOfPrimary     = vertex->GetPosition();
      // direction of primary
-     m_hDirectionOfPrimary    = particle->GetMomentum();
+     //m_hDirectionOfPrimary    = particle->GetMomentum();
      
-     FillHistograms();
+     //FillHistograms();
      
-     numberOfAcceptedPrimaries += 1.0;
-     */
+     //numberOfAcceptedPrimaries += 1.0;
+    
 }
     
 void muensterTPCPrimaryGeneratorAction::GeneratePrimariesStandard(G4Event *pEvent)

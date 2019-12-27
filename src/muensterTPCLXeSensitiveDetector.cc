@@ -58,6 +58,7 @@ G4bool muensterTPCLXeSensitiveDetector::ProcessHits(G4Step* pStep, G4TouchableHi
 
 	pHit->SetParentId(pTrack->GetParentID());
 	pHit->SetParticleType(pTrack->GetDefinition()->GetParticleName());
+	pHit->SetParticleTypeCode(pTrack->GetDefinition()->GetPDGEncoding());
 
 	if(pTrack->GetParentID())
 		pHit->SetParentType(m_hParticleTypes[pTrack->GetParentID()]);

@@ -38,6 +38,7 @@ public:
 	int m_iNbSteps;								// number of energy depositing steps
 	vector<int> *m_pTrackId;			// id of the particle
 	vector<int> *m_pParentId;			// id of the parent particle
+	vector<int> *m_pParticleTypeCode;
 	vector<string> *m_pParticleType;			// type of particle
 	vector<string> *m_pParentType;				// type of particle
 	vector<string> *m_pCreatorProcess;		// interaction
@@ -46,6 +47,7 @@ public:
 	vector<float> *m_pY;
 	vector<float> *m_pZ;
 	vector<float> *m_pEnergyDeposited; 			// energy deposited in the step
+	vector<float> *m_pTrackInitEnergy;
 	vector<float> *m_pKineticEnergy;	// particle kinetic energy after the step			
 	vector<float> *m_pTime;						// time of the step
 	vector<string> *m_pPrimaryParticleType;		// type of particle

@@ -142,6 +142,8 @@ void muensterTPCAnalysisManager::BeginOfRun(const G4Run *pRun) {
 		// parentid:	trackid of the parent track event
 		//						Acces in ROOT: 	vector<int> *parentid= new vector<int>;
 		//														T1->SetBranchAddress("parentid", &parentid);
+		m_pTree->Branch("typecode","vector<int>", &m_pEventData->m_pParticleTypeCode);
+
 		m_pTree->Branch("parentid", "vector<int>", &m_pEventData->m_pParentId);
 		// parenttype:	parenttype of the parent track event
 		//							Acces in ROOT: 	vector<string> *parenttype= new vector<string>;
@@ -172,6 +174,7 @@ void muensterTPCAnalysisManager::BeginOfRun(const G4Run *pRun) {
 		// time:	timestamp of the current particle/trackid
 		// 				Acces in ROOT: 		vector<float> *time= new vector<float>;
 		//													T1->SetBranchAddress("time", &time);
+		m_pTree->Branch("trackInitE","vector<float>", &m_pEventData->m_pTrackInitEnergy);
 		m_pTree->Branch("time", "vector<float>", &m_pEventData->m_pTime);
 
 		//******************************************************************/	
@@ -284,6 +287,7 @@ void muensterTPCAnalysisManager::EndOfEvent(const G4Event *pEvent) {
 				m_pEventData->m_pParentId->push_back(pHit->GetParentId());
 
 				m_pEventData->m_pParticleType->push_back(pHit->GetParticleType());
+				m_pEventData->m_pParticleTypeCode->push_back(pHit->GetParticleTypeCode());
 				m_pEventData->m_pParentType->push_back(pHit->GetParentType());
 				m_pEventData->m_pCreatorProcess->push_back(pHit->GetCreatorProcess());
 				m_pEventData->m_pDepositingProcess->push_back(pHit->GetDepositingProcess());
