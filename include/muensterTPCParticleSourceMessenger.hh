@@ -59,7 +59,7 @@ private:
   G4UIcmdWithAString         *m_pEnergyFileCmd;
   G4UIcmdWithAnInteger       *m_pVerbosityCmd;
   G4UIcommand                *m_pIonCmd;
-  G4UIcommand                *m_pXe131NeutrinoCaptureCmd;
+  G4UIcommand         	     *m_pXe131NeutrinoCaptureCmd;
   G4UIcmdWithAString         *m_pParticleCmd;
   G4UIcmdWith3VectorAndUnit  *m_pPositionCmd;
   G4UIcmdWith3Vector         *m_pDirectionCmd;
@@ -72,8 +72,9 @@ private:
   G4int    m_iAtomicNumber;
   G4int    m_iAtomicMass;
   G4int    m_iIonCharge;
-  G4double m_dIonExciteEnergy; 
-  G4double m_dNeutrinoScatterElectronEnergy;
+  G4double m_dIonExciteEnergy;
+  G4String m_sNeutrinoSource; 
+  G4double m_dNeutrinoEnergy;
 };
 
 #endif // __muensterTPCPPARTICLESOURCEMESSENGER_H__

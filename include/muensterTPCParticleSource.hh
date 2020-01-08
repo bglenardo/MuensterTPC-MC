@@ -103,8 +103,12 @@ public:
         m_hInputFileName = hInputFileName;
     }
 
-    void SetNeutrinoScatterElectronEnergy( G4double m_dNeutrinoScatterElectronEnergy_ ){
-	m_dNeutrinoScatterElectronEnergy = m_dNeutrinoScatterElectronEnergy_;
+    void SetNeutrinoEnergy( G4double m_dNeutrinoEnergy_ ){
+	m_dNeutrinoEnergy = m_dNeutrinoEnergy_;
+    }
+
+    void SetCs131IonExcitationEnergy( G4double m_dCs131IonExcitationEnergy_ ){
+	m_dCs131IonExcitationEnergy = m_dCs131IonExcitationEnergy_;
     }
         
         
@@ -138,7 +142,8 @@ private:
 	G4ParticleDefinition *m_pParticleDefinition;
 	G4ParticleMomentum m_hParticleMomentumDirection;
 	G4double m_dParticleEnergy;
-	G4double m_dNeutrinoScatterElectronEnergy;
+	G4double m_dNeutrinoEnergy;
+	G4double m_dCs131IonExcitationEnergy;
 	G4double m_dParticleCharge;
 	G4ThreeVector m_hParticlePosition;
 	G4double m_dParticleTime;

@@ -107,17 +107,17 @@ muensterTPCParticleSourceMessenger::muensterTPCParticleSourceMessenger(muensterT
 	m_pIonCmd->SetParameter(param);
 
 	m_pXe131NeutrinoCaptureCmd = 
-		new G4UIcommand("/Xe/gun/Xe131NeutrinoCapture", this);
-	m_pXe131NeutrinoCaptureCmd->SetGuidance("Set properties of neutrino capture event.");
-	m_pXe131NeutrinoCaptureCmd->SetGuidance("[usage] /gun/Xe131NeutrinoCapture T Ex");
-	m_pXe131NeutrinoCaptureCmd->SetGuidance("        T:(double) Kinetic energy of electron");
-	m_pXe131NeutrinoCaptureCmd->SetGuidance("        Ex:(double) Excitation of Cs131 nucleus");
-
-	param = new G4UIparameter("T", 'd', false);
-	param->SetDefaultValue("364.485");
+		new G4UIcommand("/Xe/gun/Xe131NeutrinoCaptureSource", this);
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("Set source for neutrino capture event");
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("[usage] /gun/Xe131NeutrinoCapture [Source] [Excitation Energy]");
+	m_pXe131NeutrinoCaptureCmd->SetGuidance("        Source:(string) Neutrino source. Allowed options are N13, O17, Be7High, and Be7Low");
+	param = new G4UIparameter("Source", 's', false);
+	param->SetDefaultValue("Be7High");
+	param->SetParameterCandidates("N13 O17 Be7High Be7Low");
 	m_pXe131NeutrinoCaptureCmd->SetParameter(param);
-	param = new G4UIparameter("Ex", 'd', true);
-	param->SetDefaultValue("131.615");
+
+	param = new G4UIparameter("ExcitationEnergy", 'd', false);
+	param->SetDefaultValue(0.);
 	m_pXe131NeutrinoCaptureCmd->SetParameter(param);
 
 	// source distribution type
@@ -395,15 +395,37 @@ muensterTPCParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String 
 			G4Tokenizer next(newValues);
 
 			// check argument
-			m_iAtomicNumber = 55;
+			G4String sSource = next();
+			m_sNeutrinoSource = sSource;
+
+			G4cout << "sSource: " << sSource << G4endl;
+			if( sSource.find("N13") != std::string::npos ){
+				G4cout << "Drawing energy from N13 energy spectrum" << G4endl;
+				m_pParticleSource->SetEnergyDisType("Spectrum");
+				m_pParticleSource->SetEnergyFile("macros/solar_neutrino_spectra/n13.txt");			
+				m_dNeutrinoEnergy = 0.;	
+			} else if( sSource.find("O15") != std::string::npos ){
+				m_pParticleSource->SetEnergyDisType("Spectrum");
+				m_pParticleSource->SetEnergyFile("macros/solar_neutrino_spectra/o15.txt");
+				m_dNeutrinoEnergy = 0.;
+			} else if( sSource.find("Be7High") != std::string::npos ) {
+				G4cout << "Selected Be7High option" << G4endl;
+				m_dNeutrinoEnergy = 862.*keV;
+			} else if( sSource.find("Be7Low") != std::string::npos ) {
+				m_dNeutrinoEnergy = 384.*keV;
+			} else {
+				m_dNeutrinoEnergy = 0.;
+				G4cout << " Didn't match any strings" << G4endl; 
+			}
+			if( m_dNeutrinoEnergy < 0. ) m_dNeutrinoEnergy = 0.;
+
+			m_pParticleSource->SetNeutrinoEnergy( m_dNeutrinoEnergy );
+
+
+			// check argument
+			m_iAtomicNumber = 55; // Create a Cs131 ion in an excited state.
 			m_iAtomicMass = 131;
 			m_iIonCharge = 0;
-			G4String sT = next();
-			G4cout << "sT: " << sT << G4endl;
-			m_dNeutrinoScatterElectronEnergy = StoD(sT) * keV;
-			//G4cout << "m_dNeutrinoScatterElectronEnergy set in Messenger: " << 
-			//		m_dNeutrinoScatterElectronEnergy << G4endl;
-			m_pParticleSource->SetNeutrinoScatterElectronEnergy( m_dNeutrinoScatterElectronEnergy );
 			G4String sEx = next();
 			if(sEx.isNull()){
 				m_dIonExciteEnergy = 0.0*keV;
@@ -412,6 +434,7 @@ muensterTPCParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String 
 			{
 				m_dIonExciteEnergy = StoD(sEx) * keV;
 			}
+			m_pParticleSource->SetCs131IonExcitationEnergy( m_dIonExciteEnergy );
 
 			G4ParticleDefinition *ion;
 

@@ -13,7 +13,5 @@
 # Confine the source to the LXe volume
 /Xe/gun/confine LXe #GXe
 
-#/Xe/gun/Xe131NeutrinoCapture 419.367 78.730
-#/Xe/gun/Xe131NeutrinoCapture 282.014 216.086
-#/Xe/gun/Xe131NeutrinoCapture 142.858 373.242
-/Xe/gun/Xe131NeutrinoCapture 364.485 133.615
+#/Xe/gun/Xe131NeutrinoCaptureSource Be7High 216.086
+/Xe/gun/Xe131NeutrinoCaptureSource N13 0.

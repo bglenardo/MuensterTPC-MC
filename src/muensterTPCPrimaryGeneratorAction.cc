@@ -70,6 +70,30 @@ void muensterTPCPrimaryGeneratorAction::GeneratePrimariesDecay0(G4Event *pEvent)
      //numberOfAcceptedPrimaries += 1.0;
     
 }
+
+void muensterTPCPrimaryGeneratorAction::GeneratePrimariesXe131NeutrinoCapture(G4Event *pEvent) {
+    // generate a single particle
+    m_lSeeds[0] = *(CLHEP::HepRandom::getTheSeeds());
+    m_lSeeds[1] = *(CLHEP::HepRandom::getTheSeeds()+1);
+    
+    m_pParticleSource->GeneratePrimaryVertex(pEvent);
+    G4PrimaryVertex *pVertex = pEvent->GetPrimaryVertex();
+    m_hPositionOfPrimary = pVertex->GetPosition();
+    
+     // particle name of primary
+     //m_hParticleTypeOfPrimary = particleTable->FindParticle(particle->GetG4code())->GetParticleName();
+     // kinetic energy of primary
+     //m_dEnergyOfPrimary       = particle->GetKineticEnergy();
+     // position of primary
+     //m_hPositionOfPrimary     = vertex->GetPosition();
+     // direction of primary
+     //m_hDirectionOfPrimary    = particle->GetMomentum();
+     
+     //FillHistograms();
+     
+     //numberOfAcceptedPrimaries += 1.0;
+    
+}
     
 void muensterTPCPrimaryGeneratorAction::GeneratePrimariesStandard(G4Event *pEvent)
 {
@@ -115,7 +139,7 @@ void muensterTPCPrimaryGeneratorAction::GeneratePrimaries(G4Event *pEvent) {
     if (m_pParticleSource->GetEventInputFile() == "fromDecay0File") {
         GeneratePrimariesDecay0(pEvent);
     } else if( m_pParticleSource->GetEventInputFile() == "Xe131NeutrinoCapture" ) {
-    	GeneratePrimariesDecay0(pEvent);
+    	GeneratePrimariesXe131NeutrinoCapture(pEvent);
     } else {
         GeneratePrimariesStandard(pEvent);
     }

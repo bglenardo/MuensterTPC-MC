@@ -134,8 +134,10 @@ muensterTPCParticleSource::ReadEnergySpectrum()
 		G4String hHeader;
 		hIn >> hHeader;
 
-		if(hHeader == "unit:")
+		if(hHeader == "unit:"){
 			hIn >> hEnergyUnit;
+			G4cout << "Energy Unit: " << hEnergyUnit << G4endl;
+		}
 		else if(hHeader == "spectrum:")
 			break;
 		else
@@ -158,11 +160,14 @@ muensterTPCParticleSource::ReadEnergySpectrum()
 	vector<G4double> hEnergyBins;
 	vector<G4double> hProbabilities;
 
+	G4cout << "Bin energy:\tProbability:" << G4endl;
+
 	while(!hIn.eof())
 	{
 		G4double dBinEnergy = 0., dProbability = 0.;
 
 		hIn >> dBinEnergy >> dProbability;
+		G4cout << dBinEnergy << "\t" << dProbability << G4endl;
 
 		if(hIn.good())
 		{
@@ -540,16 +545,32 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
 
     } else if( m_hEventInputFile == "Xe131NeutrinoCapture" ) {
 
+	G4double threshold = 355.*keV; // Threshold for converting Xe131 into Cs131
+
         evt->SetEventID(EvID);
         EvID += 1;
 
 	if(m_iVerbosityLevel >= 1)
-		G4cout << "Xe131 neutrino caputre generator" << G4endl;
-
-	// First, we generate the Cs131 ion	
+		G4cout << "Xe131 neutrino capture generator" << G4endl;
 
         G4PrimaryVertex *vertex = new G4PrimaryVertex(m_hParticlePosition, m_dParticleTime);
 
+	// First, see if the NeutrinoEnergy parameter is set. If it is, we have a monoenergetic source. 
+	// If it's 0, we need to generate the energy from the chosen spectrum.
+	if( m_dNeutrinoEnergy > 0. ) {
+		if( m_dNeutrinoEnergy - threshold - m_dCs131IonExcitationEnergy < 0. )
+			return;
+		m_dParticleEnergy = m_dNeutrinoEnergy - threshold - m_dCs131IonExcitationEnergy;
+	} else {
+		m_dParticleEnergy = -1.;
+		while( m_dParticleEnergy < 0. ){
+			GenerateEnergyFromSpectrum();
+			// But, we need to correct for the energy threshold of the reaction, plus the excitation energy
+			m_dParticleEnergy = m_dParticleEnergy - threshold - m_dCs131IonExcitationEnergy;
+		}
+	}
+
+	// Next, we generate the Cs131 ion	
         if(m_iVerbosityLevel >= 2)
         G4cout << "Creating primaries and assigning to vertex" << G4endl;
         // create new primaries and set them to the vertex
@@ -576,7 +597,7 @@ muensterTPCParticleSource::GeneratePrimaryVertex(G4Event * evt)
         particle_def = particleTable->FindParticle(11);
         // Set mass, direction and momentum (kinE)
 	G4double electronmass = particle_def->GetPDGMass();
-        G4double electronenergy = m_dNeutrinoScatterElectronEnergy + electronmass;
+        G4double electronenergy = m_dParticleEnergy + electronmass;
 	G4double electronpmom = std::sqrt(electronenergy * electronenergy - electronmass * electronmass);
         G4double electronpx = electronpmom * m_hParticleMomentumDirection.x();
         G4double electronpy = electronpmom * m_hParticleMomentumDirection.y();

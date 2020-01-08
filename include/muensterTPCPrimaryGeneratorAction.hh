@@ -52,6 +52,7 @@ public:
 
     void GeneratePrimariesStandard(G4Event *pEvent);
     void GeneratePrimariesDecay0(G4Event *pEvent);
+    void GeneratePrimariesXe131NeutrinoCapture(G4Event *pEvent);
     void GeneratePrimaries(G4Event *pEvent);
 
 	void     SetWriteEmpty(G4bool doit){writeEmpty = doit;};
