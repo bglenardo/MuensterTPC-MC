@@ -176,8 +176,9 @@ void muensterTPCAnalysisManager::BeginOfRun(const G4Run *pRun) {
 		// 				Acces in ROOT: 		vector<float> *time= new vector<float>;
 		//													T1->SetBranchAddress("time", &time);
 		m_pTree->Branch("trackInitE","vector<float>", &m_pEventData->m_pTrackInitEnergy);
-		m_pTree->Branch("time", "vector<float>", &m_pEventData->m_pTime);
-
+		//m_pTree->Branch("time", "vector<float>", &m_pEventData->m_pTime); //32 bit
+		//m_pTree->Branch("time", "vector<double>", &m_pEventData->m_pTime);	//64 bit		
+		m_pTree->Branch("time", "vector<long double>", &m_pEventData->m_pTime); //80 bit
 		//******************************************************************/	
 		// branches for each event/particle which contain information about the primary particle
 		//******************************************************************/
