@@ -37,7 +37,8 @@ muensterTPCStackingAction::ClassifyNewTrack(const G4Track *pTrack)
 	if(pTrack->GetDefinition()->GetParticleType() == "nucleus" && !pTrack->GetDefinition()->GetPDGStable())
 	{
 		if(pTrack->GetParentID() > 0 && pTrack->GetCreatorProcess()->GetProcessName() == "RadioactiveDecay")
-			hTrackClassification = fPostpone;
+			//hTrackClassification = fPostpone;
+			hTrackClassification = fKill;
 	}
 
 	return hTrackClassification;
