@@ -14,7 +14,7 @@ from pathlib import Path
 import datetime
 #import uncertainties.unumpy as unp
 import matplotlib as mpl 
-from iminuit import Minuit, describe, Struct
+from iminuit import Minuit, describe
 import datetime
 import time
 import matplotlib.dates as mdates
