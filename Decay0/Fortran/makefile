@@ -17,7 +17,13 @@ LDFLAGS= -m32
 #LIBS += -L/usr/local/cern/2006/lib \
 # -lmathlib -lkernlib #-lpacklib
 
+# Worked on pikp232
 LIBS += -lmathlib -lkernlib -lpacklib
+
+# Switch to nustorage CERNLIB
+#LIBS += -L/nustorage/local/cernlib/2006/lib \
+# -lmathlib -lkernlib #-lpacklib
+
 #Objektfiles
 #OBJS = espectrum.o
 #OBJS = .o
